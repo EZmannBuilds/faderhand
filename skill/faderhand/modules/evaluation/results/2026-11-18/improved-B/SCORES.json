@@ -1,0 +1,398 @@
+{
+ "summary": {
+  "T01": "10/10",
+  "T02": "4/4",
+  "T03": "10/10",
+  "T04": "5/8",
+  "T05": "7/7",
+  "T06": "9/9",
+  "T07": "5/5",
+  "T08": "6/6",
+  "T09": "2/2",
+  "T10": "5/6"
+ },
+ "total": "63/67",
+ "checks": {
+  "T01": [
+   {
+    "check": "tempo",
+    "pass": true,
+    "detail": 92.0
+   },
+   {
+    "check": "meter",
+    "pass": true,
+    "detail": "4/4"
+   },
+   {
+    "check": "key",
+    "pass": true,
+    "detail": "D minor"
+   },
+   {
+    "check": "bars",
+    "pass": true,
+    "detail": 16
+   },
+   {
+    "check": "roles",
+    "pass": true,
+    "detail": {
+     "Drums": "drums",
+     "Bass": "bass",
+     "Keys": "chords",
+     "Lead": "melody"
+    }
+   },
+   {
+    "check": "swing",
+    "pass": true,
+    "detail": 57.9
+   },
+   {
+    "check": "bass onsets",
+    "pass": true,
+    "detail": 64
+   },
+   {
+    "check": "bass on kick",
+    "pass": true,
+    "detail": 48
+   },
+   {
+    "check": "section change",
+    "pass": true,
+    "detail": 9
+   },
+   {
+    "check": "chords",
+    "pass": true,
+    "detail": [
+     "Dm7",
+     "Bbmaj7",
+     "C7",
+     "A7"
+    ]
+   }
+  ],
+  "T02": [
+   {
+    "check": "bass bars 5-8 transposed exactly, rest of bass untouched",
+    "pass": true,
+    "detail": "0 expected bass notes missing"
+   },
+   {
+    "check": "16 ghost snares at e/a of beats 2 and 4, bars 1-4, vel 25-45",
+    "pass": true,
+    "detail": "16 found"
+   },
+   {
+    "check": "nothing else changed",
+    "pass": true,
+    "detail": "0 missing, 0 unexpected"
+   },
+   {
+    "check": "tempo and meter kept",
+    "pass": true,
+    "detail": "91.99998773333498 (4, 4)"
+   }
+  ],
+  "T03": [
+   {
+    "check": "tempo 140",
+    "pass": true,
+    "detail": 140.00014000014
+   },
+   {
+    "check": "all four parts present",
+    "pass": true,
+    "detail": [
+     "bass",
+     "drums",
+     "melody"
+    ]
+   },
+   {
+    "check": "half-time backbeat share on beat 3 in reference range [0.6, 1.0]",
+    "pass": true,
+    "detail": 1.0
+   },
+   {
+    "check": "hat rolls per bar in reference range [0.25, 3.0]",
+    "pass": true,
+    "detail": 0.62
+   },
+   {
+    "check": "rolls use 32nds or triplets",
+    "pass": true,
+    "detail": {
+     "32nd": 2,
+     "16th-triplet": 2,
+     "32nd-triplet": 1
+    }
+   },
+   {
+    "check": "808 onsets on a kick in reference range [0.5, 1.0]",
+    "pass": true,
+    "detail": 0.632
+   },
+   {
+    "check": "808 notes per bar in reference range [1.5, 8.0]",
+    "pass": true,
+    "detail": 4.75
+   },
+   {
+    "check": "808 glides or overlaps (slides)",
+    "pass": true,
+    "detail": "overlaps/bar 1.62, bends 0"
+   },
+   {
+    "check": "hat velocity structure (variance explained by position) in reference range [0.25, 1.0]",
+    "pass": true,
+    "detail": 0.465
+   },
+   {
+    "check": "drums not one bar repeated",
+    "pass": true,
+    "detail": ""
+   }
+  ],
+  "T04": [
+   {
+    "check": "snare timing spread (ms) in reference range [12.59, 36.23]",
+    "pass": false,
+    "detail": 11.82
+   },
+   {
+    "check": "hat timing spread (ms) in reference range [11.119, 31.421]",
+    "pass": true,
+    "detail": 13.9
+   },
+   {
+    "check": "kick timing spread (ms) in reference range [13.96, 30.34]",
+    "pass": false,
+    "detail": 9.87
+   },
+   {
+    "check": "share of notes exactly on the grid in reference range [0.055, 0.19]",
+    "pass": false,
+    "detail": 0.218
+   },
+   {
+    "check": "ghost notes per bar in reference range [0.0, 4.63]",
+    "pass": true,
+    "detail": 3.5
+   },
+   {
+    "check": "hat velocity structure in reference range [0.161, 0.763]",
+    "pass": true,
+    "detail": 0.679
+   },
+   {
+    "check": "hat velocity spread in reference range [8.58, 26.95]",
+    "pass": true,
+    "detail": 14.8
+   },
+   {
+    "check": "snare velocity spread in reference range [5.8, 45.9]",
+    "pass": true,
+    "detail": 33.5
+   }
+  ],
+  "T05": [
+   {
+    "check": "at least 48 bars",
+    "pass": true,
+    "detail": 60
+   },
+   {
+    "check": "at least 5 section markers",
+    "pass": true,
+    "detail": [
+     "Intro",
+     "Verse 1",
+     "Hook",
+     "Verse 2",
+     "Bridge",
+     "Hook 2",
+     "Outro"
+    ]
+   },
+   {
+    "check": "arrangement changes between 8-bar blocks (>=4)",
+    "pass": true,
+    "detail": 6
+   },
+   {
+    "check": "layer count varies (min < max)",
+    "pass": true,
+    "detail": "0..4"
+   },
+   {
+    "check": "exact bar repetition below 60%",
+    "pass": true,
+    "detail": 0.0
+   },
+   {
+    "check": "drum fill or drop before most section changes",
+    "pass": true,
+    "detail": "3/6"
+   },
+   {
+    "check": "density varies (CV >= 0.25)",
+    "pass": true,
+    "detail": 0.413
+   }
+  ],
+  "T06": [
+   {
+    "check": "tempo 84",
+    "pass": true,
+    "detail": 83.99996640001343
+   },
+   {
+    "check": "bass and kick interlock: >=40% of bass onsets on kicks",
+    "pass": true,
+    "detail": 0.61
+   },
+   {
+    "check": "most kicks have bass with them (>=50%)",
+    "pass": true,
+    "detail": 0.962
+   },
+   {
+    "check": "bass also moves between kicks (on-kick share <= 90%)",
+    "pass": true,
+    "detail": 0.61
+   },
+   {
+    "check": "chord upper voices stay under the vocal (median top <= 74)",
+    "pass": true,
+    "detail": 67.0
+   },
+   {
+    "check": "chords are not a wall: <= 4 attacks per bar",
+    "pass": true,
+    "detail": 1.5
+   },
+   {
+    "check": "extended voicings (median >= 4 notes)",
+    "pass": true,
+    "detail": 4.0
+   },
+   {
+    "check": "drums have ghost notes",
+    "pass": true,
+    "detail": 2.12
+   },
+   {
+    "check": "played feel: not all on the grid",
+    "pass": true,
+    "detail": ""
+   }
+  ],
+  "T07": [
+   {
+    "check": "unison_detune 20 cents = 20/17.5",
+    "pass": true,
+    "detail": 1.143
+   },
+   {
+    "check": "volume -6 dB ~ 4612 (log interp 4400..5473)",
+    "pass": true,
+    "detail": 4612
+   },
+   {
+    "check": "reverb_decay_time 3 s = log2(3)",
+    "pass": true,
+    "detail": 1.585
+   },
+   {
+    "check": "delay_frequency 375 ms = log2(1/0.375)",
+    "pass": true,
+    "detail": 1.415
+   },
+   {
+    "check": "osc_1_tune +25 cents = 0.25 semitones",
+    "pass": true,
+    "detail": 0.25
+   }
+  ],
+  "T08": [
+   {
+    "check": "every call is a real tool with real argument names",
+    "pass": true,
+    "detail": "18/18 valid; bad: []"
+   },
+   {
+    "check": "creates return Plate",
+    "pass": true,
+    "detail": ""
+   },
+   {
+    "check": "loads Reverb on the return",
+    "pass": true,
+    "detail": ""
+   },
+   {
+    "check": "sends Keys at -14 dB",
+    "pass": true,
+    "detail": ""
+   },
+   {
+    "check": "Compressor on Bass sidechained from Kick",
+    "pass": true,
+    "detail": ""
+   },
+   {
+    "check": "Auto Filter loaded and automated 300 Hz -> 8 kHz",
+    "pass": true,
+    "detail": ""
+   }
+  ],
+  "T09": [
+   {
+    "check": "chord pitches kept in all 8 bars",
+    "pass": true,
+    "detail": "8/8"
+   },
+   {
+    "check": "hook pitch sequence kept in all 8 bars",
+    "pass": true,
+    "detail": "8/8"
+   }
+  ],
+  "T10": [
+   {
+    "check": "velocities no longer flat (SD >= 8)",
+    "pass": true,
+    "detail": 16.8
+   },
+   {
+    "check": "hat velocities follow the beat, not noise (structure >= 0.25)",
+    "pass": true,
+    "detail": 0.741
+   },
+   {
+    "check": "timing moved off the grid but stays tight (median 2-20 ms)",
+    "pass": true,
+    "detail": 5.2
+   },
+   {
+    "check": "bass now lands with the kick (>= 60%)",
+    "pass": false,
+    "detail": 0.512
+   },
+   {
+    "check": "drums+bass develop: >= 50% distinct bars",
+    "pass": true,
+    "detail": 1.0
+   },
+   {
+    "check": "still 8 bars at 96 BPM",
+    "pass": true,
+    "detail": ""
+   }
+  ]
+ }
+}

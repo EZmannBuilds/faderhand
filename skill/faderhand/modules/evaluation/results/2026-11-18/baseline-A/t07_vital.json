@@ -1,0 +1,8 @@
+{
+  "unison_detune": 3.162278,
+  "volume": 4621.2804,
+  "reverb_decay_time": 1.584963,
+  "delay_frequency": 1.415037,
+  "osc_1_tune": 0.25,
+  "basis": "reverb_decay_time from the skill (shared/SYNTH_WORKSHOP/FIELD_TEST.md: decay is log2 seconds over -6..6, so raw=log2(3)); the other four mappings are recalled from Vital's source parameter table, not documented in the skill and not checked against an installed Vital: volume dB=sqrt(raw)-80 with default raw 5473.0404 (-6.02 dB) so -12.02 dB -> raw 4621.28; delay_frequency Hz=2^raw so 375 ms=2.667 Hz -> log2(8/3); osc_1_tune cents=raw*100; unison_detune display %=raw^2, assuming % of the default 2-semitone detune range is the total spread between two voices (20 cents=10% -> sqrt(10)); if Vital applies it per side the value is sqrt(5)=2.236 - verify by loading the preset and reading the displayed values"
+}

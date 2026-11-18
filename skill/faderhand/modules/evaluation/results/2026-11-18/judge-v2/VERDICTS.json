@@ -1,0 +1,66 @@
+{
+  "setA": {
+    "T03": {
+      "A": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 8, "musicality": 7},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 7, "interplay": 8, "musicality": 7},
+      "preferred": "B",
+      "reason": "Both lock 808 to kick on every hit. B's kick pattern changes almost every bar (bar 3 0/6/9/14, bar 6 0/3/7/11), and its lead builds to F5 peaks in bars 5 and 7 with the harmonic-minor E natural over C. A's lead repeats one 2-bar cell. B's hat rolls in nearly every bar get busy, and both use flat velocities."
+    },
+    "T04": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 7, "musicality": 8},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 6, "musicality": 6},
+      "preferred": "A",
+      "reason": "A keeps clear 8th-note hat accents (~90) over 16th ghosts (~60), with a laid-back backbeat (+8-18ms), a pedal hat in bar 3 and a flam plus two-tom fill in bar 4. B's on-beat hats rush 10-24ms ahead of an on-grid snare, its accents wander (the beat-3 hat is 65 in bar 1), and its fill ends with two toms stacked on step 15."
+    },
+    "T05": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 6, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 7, "genre_authenticity": 8, "development": 8, "interplay": 8, "musicality": 8},
+      "preferred": "B",
+      "reason": "A has the deeper swing (kick on step 7 +30-40ms, shaker in the hooks), but verse 1 is 16 bars of one 4-bar loop with no lead. B changes texture by section: walking quarter-note bass and offbeat keys stabs in verse 2 (bars 33-40), a ride and side-stick bridge (41-48), a snare-roll setup in bar 48, and a hook-2 lead that climbs to C6 in bar 55."
+    },
+    "T06": {
+      "A": {"groove_feel": 7, "genre_authenticity": 7, "development": 6, "interplay": 7, "musicality": 7},
+      "B": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 8},
+      "preferred": "B",
+      "reason": "Both lock bass to the dragged kick on step 7. B's bass adds ghost notes and chromatic approaches (A1 to Bb1 in bars 1, 4 and 7), and its EP pushes chords on step 14 into the next bar (bars 1 and 4), the way neo-soul keys are played. A's EP mostly holds one rolled chord per bar, which leaves vocal room but sounds static."
+    },
+    "T10": {
+      "A": {"groove_feel": 7, "genre_authenticity": 7, "development": 8, "interplay": 7, "musicality": 7},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 7, "interplay": 7, "musicality": 6},
+      "preferred": "A",
+      "reason": "A's keys move from held chords (bars 1-4) to stab comping on steps 0/6/10/14 (bars 5-7), and its hats go from 8ths to 16ths at bar 5 with real micro-timing. B has a good drum arc (side stick in bars 1-2, tom fill in bar 8) and a bass line that grows, but the keys stay one whole-note chord per bar and the drums sit within a few ms of the grid. Both keep the protected pitches."
+    }
+  },
+  "setB": {
+    "T03": {
+      "A": {"groove_feel": 6, "genre_authenticity": 7, "development": 8, "interplay": 8, "musicality": 7},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 8, "musicality": 7},
+      "preferred": "A",
+      "reason": "A changes hat patterns (half-time 8ths in bar 3, triplet hats in bar 6, a 32nd roll into a snare build in bar 8), and its lead develops (C6 in bar 5, Db Neapolitan in bar 7). B's 808 octave jumps (G1 to G2 on step 7) are idiomatic, but its lead repeats a 2-bar D-Eb-D cell and the drums vary only through rolls. Both use flat velocities."
+    },
+    "T04": {
+      "A": {"groove_feel": 7, "genre_authenticity": 8, "development": 7, "interplay": 7, "musicality": 7},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 5, "interplay": 6, "musicality": 6},
+      "preferred": "A",
+      "reason": "A holds a consistent pocket (16th offbeats +10-15ms, snare +8-12ms), with a crash, pedal hat, open hats and a descending three-tom fill in bar 4, although its hat velocity cycle (62/82/66/106) repeats almost exactly. B's on-beat hats rush 10-22ms ahead of an on-grid snare, and its bar-4 fill is only two tom hits."
+    },
+    "T05": {
+      "A": {"groove_feel": 6, "genre_authenticity": 7, "development": 7, "interplay": 7, "musicality": 6},
+      "B": {"groove_feel": 8, "genre_authenticity": 8, "development": 8, "interplay": 8, "musicality": 8},
+      "preferred": "B",
+      "reason": "A repeats identical velocities every bar (bass 100/86/92/80, hats 70/54), and its bridge build (8th- then 16th-note snare crescendo, bars 43-44) is an EDM riser. B has organic velocities, early-pushed hats against swung ghost snares, a breakdown bridge (side stick only, bars 41-44), a syncopated hook motif anticipating on step 7, and chromatic bass approaches in hook 2 (bars 46-56)."
+    },
+    "T06": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 5, "interplay": 7, "musicality": 6},
+      "preferred": "A",
+      "reason": "A's Fm9-Bb13-Ebmaj9-Abmaj9 progression with a C7alt turnaround (bar 7) is real neo-soul harmony, voiced softly with the top note accented, and its bass answers the kick drags on steps 3 and 7 (+33-46ms). B's drums repeat identical velocities every bar (hats 81/63/47, kick 104/90), bars 5-8 copy bars 1-4, and the EP plays block chords."
+    },
+    "T10": {
+      "A": {"groove_feel": 7, "genre_authenticity": 7, "development": 8, "interplay": 7, "musicality": 7},
+      "B": {"groove_feel": 5, "genre_authenticity": 6, "development": 7, "interplay": 7, "musicality": 5},
+      "preferred": "A",
+      "reason": "A's keys move from held chords to stab comping (bars 5-7), its drums add 16th hats and open hats with loose timing, and its bass pushes onto step 3 with the kick in bars 5 and 7. B has a sensible arc (side stick in bars 1-2, crash in bar 5, tom fill in bar 8), but its hat velocities step mechanically (85/62, then 93/72/55) close to the grid, and the keys are a whole-note block chord every bar."
+    }
+  }
+}

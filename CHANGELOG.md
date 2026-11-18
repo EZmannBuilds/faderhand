@@ -1,5 +1,17 @@
 # Changelog
 
+## Unreleased: the Faderhand skill (development)
+
+- **One music skill ships with Faderhand:** `skill/faderhand/`. It merges the AI Music Studio, the WavRead
+  agent skill, calibrated Vital units and a Faderhand DAW module behind one entry point, and keeps them as
+  modules inside.
+- **A MIDI knowledge library learned from a licensed corpus:** Groove MIDI Dataset, curated Mutopia pieces and an
+  approved PDMX subset. Only aggregate statistics and written guidance are included, never source MIDI.
+- **`tools/midi_check.py`** measures a MIDI file against those ranges and lists what to revise.
+  **`tools/kb_search.py`** retrieves knowledge sections.
+- **A ten-task benchmark** with an objective scorer and baseline-versus-improved results
+  (`modules/evaluation/`).
+
 ## v0.6.0-alpha.1 (unreleased)
 
 - **Renamed to Faderhand, for Ableton Live 12.** The control script folder and class are now `Faderhand`

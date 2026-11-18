@@ -207,6 +207,19 @@ slots, rack macro mapping) are not part of this release.
 
 Planned work: [ROADMAP.md](ROADMAP.md).
 
+## The music skill
+
+`skill/faderhand/` is an agent skill for any music task:
+- composing and arranging;
+- writing and editing MIDI;
+- Vital sound design;
+- reading WavRead reports;
+- mixing in Live through this server's tools.
+
+It includes a MIDI knowledge library measured from a licensed corpus, and a checker that measures generated MIDI
+against it. Install it and see what it contains in [skill/faderhand/README.md](skill/faderhand/README.md).
+Its studio module is licensed PolyForm Noncommercial 1.0.0; the rest is MIT.
+
 ## Development
 
 - Offline tests:

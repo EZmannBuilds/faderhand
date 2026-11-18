@@ -1,0 +1,124 @@
+[
+ {
+  "tool": "tooling_info",
+  "args": {}
+ },
+ {
+  "tool": "get_set_identity",
+  "args": {}
+ },
+ {
+  "tool": "write_status",
+  "args": {}
+ },
+ {
+  "tool": "list_tracks",
+  "args": {}
+ },
+ {
+  "tool": "create_return_track",
+  "args": {
+   "name": "Plate"
+  }
+ },
+ {
+  "tool": "load_effect_on_return_track",
+  "args": {
+   "ret": "Plate",
+   "effect": "Reverb"
+  }
+ },
+ {
+  "tool": "get_return_track_devices",
+  "args": {
+   "ret": "Plate"
+  }
+ },
+ {
+  "tool": "set_track_send",
+  "args": {
+   "track": "Keys",
+   "send": "Plate",
+   "db": -14
+  }
+ },
+ {
+  "tool": "get_track_sends",
+  "args": {
+   "track": "Keys"
+  }
+ },
+ {
+  "tool": "load_effect",
+  "args": {
+   "track": "Bass",
+   "effect": "Compressor"
+  }
+ },
+ {
+  "tool": "set_sidechain",
+  "args": {
+   "track": "Bass",
+   "device": "Compressor",
+   "source": "Kick",
+   "on": true,
+   "params": {
+    "Threshold": "-30 dB",
+    "Ratio": "4",
+    "Attack": "1 ms",
+    "Release": "150 ms"
+   }
+  }
+ },
+ {
+  "tool": "inspect_device_sidechain",
+  "args": {
+   "track": "Bass",
+   "device": "Compressor"
+  }
+ },
+ {
+  "tool": "load_effect",
+  "args": {
+   "track": "Lead",
+   "effect": "Auto Filter"
+  }
+ },
+ {
+  "tool": "list_automatable_parameters",
+  "args": {
+   "track": "Lead"
+  }
+ },
+ {
+  "tool": "record_arrangement_automation",
+  "args": {
+   "track": "Lead",
+   "target": {
+    "device": "Auto Filter",
+    "parameter": "Frequency"
+   },
+   "points": [
+    {
+     "at": "17.1.1",
+     "value": "300 Hz"
+    },
+    {
+     "at": "25.1.1",
+     "value": "8000 Hz"
+    }
+   ],
+   "units": "display"
+  }
+ },
+ {
+  "tool": "param_state",
+  "args": {
+   "track": "Lead",
+   "target": {
+    "device": "Auto Filter",
+    "parameter": "Frequency"
+   }
+  }
+ }
+]

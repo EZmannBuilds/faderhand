@@ -1,0 +1,22 @@
+{
+  "tempo_bpm": 92.0,
+  "meter": "4/4",
+  "key": "D minor",
+  "bars": 16,
+  "roles": {
+    "Drums": "drums",
+    "Bass": "bass",
+    "Keys": "chords",
+    "Lead": "melody"
+  },
+  "swing_percent": 57.9,
+  "bass_onsets_total": 64,
+  "bass_onsets_on_kick": 48,
+  "arrangement_change_bar": 9,
+  "chords": [
+    "Dm7",
+    "Bbmaj7",
+    "C7",
+    "A7"
+  ]
+}

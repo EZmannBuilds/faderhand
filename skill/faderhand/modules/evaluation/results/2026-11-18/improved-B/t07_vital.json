@@ -1,0 +1,8 @@
+{
+  "unison_detune": 1.143,
+  "volume": 4612,
+  "reverb_decay_time": 1.585,
+  "delay_frequency": 1.415,
+  "osc_1_tune": 0.25,
+  "basis": "Faderhand skill modules/vital/README.md calibrated units (measured on Vital 1.0.7 renders): unison_detune = cents/17.5 (linear, 20/17.5); volume interpolated in log(value) between 5473 (0 dB, default) and 4400 (-7.65 dB) -> -6 dB ~ 4612; reverb_decay_time = log2(3 s); delay_frequency = log2(1/0.375 s); osc_1_tune in semitones (+25 cents = 0.25). Recheck on another Vital version."
+}
