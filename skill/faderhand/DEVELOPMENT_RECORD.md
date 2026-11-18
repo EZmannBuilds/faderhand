@@ -124,7 +124,9 @@ Full report: `modules/evaluation/results/2026-11-18/REPORT.md`.
   `ai-music-studio` and `wavread` skills would duplicate them.
 - **decision: ai-music-studio's repo** still lacks the three newer files found in its installed copy (the same
   trap as on 2026-09-15). Syncing them into that repo is separate work.
-- **open: listen.** Two blind A/B WAV packs need a human listener: `<corpus>/_evals/blind/listen` and
+- **done in part: listen.** The user listened to both packs: round 2 "definitely sounds better", and they "really
+  like all of them", with "a few changes" possible. Per-pair A/B picks are still open.
+- **was open: listen.** Two blind A/B WAV packs need a human listener: `<corpus>/_evals/blind/listen` and
   `blind2/listen`, with keys in their `KEYS-do-not-open-until-you-have-listened` folders. Agent judging reads notes;
   it doesn't hear.
 - **open: re-evaluate the two round-2 fixes** (hats anchored to the grid; bar-by-bar trap variation), with a

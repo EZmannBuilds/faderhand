@@ -106,7 +106,11 @@ What the judge said, in short:
     - trap: ask for bar-by-bar kick and hat variation and a lead that builds, not just short cells;
     - played grooves: anchor the hats near the grid, and express the pocket as a late snare and late
       off-16ths rather than early hats.
-- **Not measured at all:** listening. The judge reads notes. 20 WAV pairs per round are in
+- **Human listening (the user, 2026-11-18):** an overall listen to both packs: "Round two definitely sounds
+  better. I really like all of them. There could be a few changes, but as of now, it sounds pretty good." That is a
+  verdict on round 2 against round 1. No per-pair A/B picks were made, so it doesn't yet separate the baseline from
+  the improved skill within a pair.
+- **Before that, not measured at all:** listening. The judge reads notes. 20 WAV pairs per round are in
   `<evals>/blind/listen` and `blind2/listen`, with keys in a separate folder. They are a
   neutral General MIDI render for blind A/B listening.
 - **Not tested in Live:** T08 checks the Faderhand plan against the tool schemas only.
