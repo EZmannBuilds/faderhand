@@ -27,6 +27,10 @@ work; Faderhand only executes. What happened:
   fill with the dying chord. The rule went into `daw/README.md`.
 - **Level-matched blind pack made:** -12.96 LUFS, same mix gains and master chain. The listen and the
   keep-or-fix-the-ring decision are the owner's.
+- **Listen: the owner preferred A**, because in B and C, at about 30 s, "the violin is too loud and then
+  everything slows down and stops". That passage is the verse-1 stab dropout: the ringing chord, then a hole. The
+  measurement had predicted that failure. Lesson for the director: check how each instrument behaves on note-off
+  before planning silence.
 - **Disk:** the Data volume hit 100% mid-render and one Live export failed. The cause found: Live's earlier exports
   (18–19 Nov) had also written per-track side files, 12 GB, into the other session's render folder. Reported; not
   deleted without the owner's OK.
