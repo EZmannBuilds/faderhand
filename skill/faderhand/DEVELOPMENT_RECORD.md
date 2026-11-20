@@ -38,6 +38,12 @@ work; Faderhand only executes. What happened:
     approved level.
   - Intro and bridge contrast now shows in loudness: B2 and C2 sit 1.8 and 0.7–1.2 LU under A2.
   - A new blind pack is waiting for the owner's listen.
+- **Round 2 listen: the owner preferred A2,** the original arrangement with the ring off. B and C lost both rounds on
+  this song.
+- **The owner asked for the bridge instrument "to be rendered in Live".** It was a Tension cello model; it was
+  swapped for recorded cello samples in a scratch copy (A3).
+  - Pitch was checked, the level was matched in the bridge, and the A3 master is waiting for a listen.
+  - Lesson: the Hyper Medz presets ship in Trigger envelope mode. Check it on every one before use.
 - **Disk:** the Data volume hit 100% mid-render and one Live export failed. The cause found: Live's earlier exports
   (18–19 Nov) had also written per-track side files, 12 GB, into the other session's render folder. Reported; not
   deleted without the owner's OK.
