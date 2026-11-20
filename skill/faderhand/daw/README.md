@@ -80,6 +80,8 @@ hits dying away.
 - **Before an arrangement plan relies on silence:** read the instrument's envelope (`get_device_parameters`, or the
   `.als`).
 - **After rendering:** measure the stem inside each planned gap. Don't trust the notes alone.
+- `tools/preflight.py` does both: `set` flags Trigger-mode samplers, long releases and tails on sends; `occupancy`
+  lists beats that sound with no note sounding.
 
 ## Where MIDI notes come from
 
