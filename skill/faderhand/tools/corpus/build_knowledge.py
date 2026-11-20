@@ -3,7 +3,8 @@
 Usage: python3 -I build_knowledge.py <corpus_root> <skill_knowledge_dir>
 Writes:
   <knowledge>/stats/*.json          from approved sources (Groove, Mutopia, PDMX): may ship
-  <knowledge>/local/*.json          from pending sources (Zynthion): local only, never shipped (gitignored)
+  <knowledge>/local/*.json          from pending sources (Zynthion): local only, never shipped (gitignored).
+  The knowledge directory is the AI Music Studio skill's shared/MIDI_KNOWLEDGE/ (since 2026-11-20).
   <corpus_root>/_evals/refs.json    p10..p90 ranges from HELD-OUT files only, for evaluation/score.py
 Only aggregate numbers (medians, ranges, counts, histograms) are written: no notes, no per-file patterns.
 """

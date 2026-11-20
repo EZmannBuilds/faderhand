@@ -1,60 +1,51 @@
 ---
 name: faderhand
 version: 0.7.0-dev
-description: One music skill for composing, arranging, producing, sound design, mixing, analysis and DAW control. Writes and edits MIDI in any genre with corpus-measured groove, 808, melody and arrangement rules and a measure-and-revise loop; drives Ableton Live 12 through Faderhand (mixer, returns, sends, routing, devices, racks, sidechain, automation, recording); designs Vital patches with calibrated units; reads WavRead analysis reports. Use for any music task, with or without a DAW.
+description: Drive Ableton Live 12 through the Faderhand MCP tools (tracks, mixer in dB, returns and sends, routing and buses, devices and parameters, racks, sidechain, automation, Arrangement clips, recording and rendering), measure MIDI against genre ranges and list what to revise (midi_check), validate and execute Music Production Blueprints, and set Vital patches with calibrated units. Use for any hands-on Live task or MIDI measurement. Composition and arrangement planning live in the separate AI Music Studio skill.
 ---
 
 # Faderhand
 
-One entry point for every music task. Inside, it routes to modules. Load only the module a task needs.
+Faderhand is the hands: it acts inside a running Live Set, measures MIDI, and executes plans. It does not decide
+what the music should be. The **AI Music Studio** skill (installed separately) plans the music. The **WavRead** skill
+(also separate) reads audio analysis reports. Faderhand works with or without either of them.
 Resolve every path relative to this folder.
 
 ## Route the task
 
 | The task is about… | Open | Then |
 |---|---|---|
-| Writing, continuing, arranging or diagnosing music; lyrics; any creative brief | `modules/studio/SKILL.md` → its **Music Director** | The Director locks intent and routes to its fifteen specialists |
-| Writing or editing **MIDI** (any part, any genre) | `modules/knowledge/GENERATION_RULES.md`, then `tools/kb_search.py` for the genre and role | Measure every file with `tools/midi_check.py` and revise before calling it done |
-| Groove, feel, humanising, drums | `modules/knowledge/DRUMS_AND_GROOVE.md` | `midi_check.py --genre …` |
-| 808s, basslines, kick and bass lock | `modules/knowledge/LOW_END_808_AND_BASS.md` | |
-| Melody, hooks, arps, counterpoint, development | `modules/knowledge/MELODY_LINES_AND_DEVELOPMENT.md` | |
-| Song form, sections, part interplay, revising | `modules/knowledge/ARRANGEMENT_AND_REVISION.md` | |
-| **Ableton Live:** mixer, returns, sends, buses, routing, devices, racks, sidechain, automation, recording, render | `modules/daw-faderhand/README.md` | Faderhand's tools (`tooling_info` first) |
-| **Vital:** patches, preset values, synthesis | `modules/vital/README.md` → `modules/studio/shared/SYNTH_WORKSHOP/` | Use the calibrated units, not guesses |
-| **WavRead:** operating the app, reading a report, comparing mixes | `modules/wavread/SKILL.md` | WavRead measures. It never decides whether music is good. |
-| Mixing decisions | `modules/studio/mix-engineer/SKILL.md` | Act in Live through Faderhand; check renders with WavRead |
-| FL Studio, Pro Tools, other DAWs | `modules/studio/daw-adapters/` | Check the capability matrix before promising an operation |
+| **Ableton Live:** mixer, returns, sends, buses, routing, devices, racks, sidechain, automation, Arrangement clips, recording, render | `daw/README.md` | Faderhand's tools (`tooling_info` first) |
+| **Measuring a MIDI file**: groove, swing, ghost notes, hat tiers, kick and 808 lock, melody shape, section changes | `tools/midi_check.py` (ranges and sources: `tools/TARGETS.md`, `tools/PROVENANCE.md`) | Report every REVISE line and say which are deliberate |
+| **A blueprint** to check or execute (a plan from the Studio skill, or one written here) | `blueprint/README.md` | Validate first: `blueprint/validate_blueprint.py` |
+| **Expressing an existing song as a blueprint** | `blueprint/blueprint_from_midi.py` | Validate it, then compare its measured relationships with the intent |
+| **Vital:** preset values, patches | `vital/README.md` | Use the calibrated units, not guesses |
+| Testing a skill change | `evaluation/README.md` | Same tasks, same model; score and compare blind |
 
-Several modules often apply. A beat for a Live Set uses the Director, the knowledge rules, `midi_check.py`,
-Faderhand and, to check it, WavRead.
+**If the AI Music Studio skill is installed,** creative decisions go through its Music Director. Faderhand carries
+them out and reports measurements back. **Without it,** do what the user asked directly. For new composition, say that
+the Studio skill exists, and still measure anything you write with `midi_check.py`.
 
-## Rules that hold everywhere
+## Rules
 
-1. **User profile:** load it if one exists (`modules/studio/profiles/local/`). Nothing personal is ever
-   written into skill files.
-2. **Audit before you promise:**
-   - Check which tools are actually connected (Faderhand, AbletonMCP, WavRead) and which instruments are
-     installed (`modules/studio/plugin-auditor/`).
-   - Don't assume a DAW, plugin or tool can do something it hasn't shown it can.
-3. **Explore before committing:** for composition tasks, sketch 2–3 directions that differ by mechanism, compare
-   them, and build the strongest or a combination (`modules/studio/shared/SKETCH_ROUND_PROTOCOL.md`).
-4. **Measure, read back, revise:**
-   - A rendered file or written MIDI is not a finished task.
-   - Run `midi_check.py`, read back protected material, render and listen when possible, then revise the cause.
-   - Report what was and wasn't heard.
-5. **Learn principles, not tunes:**
-   - The knowledge library holds distributions from a licensed corpus.
-   - Never reproduce a melody, bassline or pattern from a reference or from memory of a known song.
-6. **Faderhand safety:** say which saved Set is open before editing, suggest a copy for real songs, and read
-   every write back. There is no per-song or per-conversation authorisation code; don't invent one.
-7. **Provenance:** third-party MIDI never goes into an output, a commit or this skill. Numbers in
-   `modules/knowledge/local/` are local only.
+1. **Confirm the Set.** Call `get_set_identity` and say which saved Set is open before editing. Suggest a copy for a song
+   that matters. Edit only what was asked, and read every write back.
+2. **No authorisation codes.** There is no per-song or per-conversation code, and you must not invent one. The guards
+   are: saved Sets only, deletes only in a Set with a `__TOOLING_SCRATCH__` track, and read-back on every write.
+3. **Audit before you promise.** Check which tools are connected and which instruments are installed. Measure an
+   instrument before trusting it: some presets sound an octave off their written note, and some drum-kit pads ship
+   20 dB down.
+4. **A rendered file is not a finished task.** Render, measure (stems, `midi_check.py`, WavRead if present), fix the
+   cause, and report what wasn't heard.
+5. **Keep musical intent through a revision.** Swapping a sound or a patch keeps the notes and roles unless the user
+   asked for more.
+6. **Provenance:** third-party MIDI never goes into an output, a commit or this skill.
 
-## Tools in this skill
+## Tools
 
 ```
-uv run -q --no-project --with mido python tools/midi_check.py <file.mid> --genre <genre>   # measure and get revisions
-python3 tools/kb_search.py "<genre> <role> <question>"                                     # retrieve knowledge sections
-modules/studio/tools/check_all.py --profile <yaml>                                         # the studio's release checks
-modules/evaluation/score.py <run_dir>                                                      # score an evaluation run
+uv run -q --no-project --with mido python tools/midi_check.py <file.mid> --genre <genre>
+uv run -q --no-project --with jsonschema python blueprint/validate_blueprint.py <blueprint.json>
+uv run -q --no-project --with mido python blueprint/blueprint_from_midi.py <song.mid> <mapping.json> <out.json>
+uv run -q --no-project --with mido python evaluation/score.py <run_dir> --refs <refs.json>
 ```

@@ -7,7 +7,7 @@ Usage:
 
 It reads the tracks, guesses each part's role (drums on channel 10; names such as "808", "bass", "keys",
 "lead" win over guesses), measures them with the corpus analyser, and compares the numbers with target
-ranges. The ranges come from knowledge/TARGETS.md: Groove MIDI (human drumming, CC BY 4.0), Mutopia and
+ranges. The ranges come from TARGETS.md beside this file: Groove MIDI (human drumming, CC BY 4.0), Mutopia and
 PDMX (public domain / CC) and, for programmed electronic and trap patterns, aggregate statistics from
 packs whose numbers stay on this machine.
 
@@ -22,7 +22,7 @@ sys.path.insert(0, os.path.join(HERE, "corpus"))
 import midi_lib  # noqa: E402
 import analyze  # noqa: E402
 
-# Target ranges (lo, hi). None = no check. See knowledge/TARGETS.md for where every number comes from.
+# Target ranges (lo, hi). None = no check. See TARGETS.md beside this file for where every number comes from.
 LIVE = {  # human-played drum feel (Groove MIDI, beats, 10th-90th percentile, rounded)
     "quantized_share": (0.0, 0.3), "drum_jitter_ms": (3, 12), "hat_vel_structure": (0.2, 0.8),
     "hat_vel_sd": (8, 27), "snare_vel_sd": (12, 45), "snare_behind_hats_ms": (2, 25),

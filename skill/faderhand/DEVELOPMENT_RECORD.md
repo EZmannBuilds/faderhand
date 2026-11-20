@@ -3,6 +3,22 @@
 Started 2026-11-18, branch `feat/universal-music-skill` in `this repository`. Done items are marked
 **done**. Items still open are marked **open**, and the ones waiting on the owner are marked **decision**.
 
+
+## 2026-11-20: rescoped into separate skills
+
+The owner decided to keep the studio skill and Faderhand separate, bundled on the WavRead website. Planning with
+ChatGPT set the order: split the skills, set a composition contract, then build an arrangement director. What changed:
+- **This skill is now Faderhand only:** `daw/`, `vital/`, `blueprint/`, `tools/` and `evaluation/`.
+- **Removed:** the copies of the Studio and WavRead skills.
+- **Moved:** the MIDI knowledge pages, their stats and the knowledge search tool, to the Studio repo's local branch
+  `feat/midi-knowledge` (`0d025c4`, not pushed). The checker, its ranges and provenance, and the corpus tools stay
+  here.
+- **New:** Music Production Blueprint v0 (schema, validator, converter, example) and 8 offline tests. *Cold Brick*
+  converts to a valid blueprint, kept with the song files, not in the repo.
+- **The plan:** `docs/ARCHITECTURE-AND-DELIVERY-PLAN.md`.
+
+The sections below record the 2026-11-18 work as it was done, with the paths it used then (`modules/...`).
+
 ## 1. What was in the environment
 
 | Found | Where | State |

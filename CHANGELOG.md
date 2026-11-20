@@ -2,15 +2,16 @@
 
 ## Unreleased: the Faderhand skill (development)
 
-- **One music skill ships with Faderhand:** `skill/faderhand/`. It merges the AI Music Studio, the WavRead
-  agent skill, calibrated Vital units and a Faderhand DAW module behind one entry point, and keeps them as
-  modules inside.
-- **A MIDI knowledge library learned from a licensed corpus:** Groove MIDI Dataset, curated Mutopia pieces and an
-  approved PDMX subset. Only aggregate statistics and written guidance are included, never source MIDI.
-- **`tools/midi_check.py`** measures a MIDI file against those ranges and lists what to revise.
-  **`tools/kb_search.py`** retrieves knowledge sections.
-- **A ten-task benchmark** with an objective scorer and baseline-versus-improved results
-  (`modules/evaluation/`).
+- **`skill/faderhand/`: the Faderhand agent skill.**
+  - Live recipes and safety (`daw/`) and calibrated Vital units (`vital/`).
+  - `tools/midi_check.py` measures MIDI against genre ranges from a licensed corpus and lists revisions.
+  - Corpus tools to rebuild those numbers (`tools/corpus/`).
+  - A ten-task benchmark with results (`evaluation/`).
+- **Music Production Blueprint v0** (`skill/faderhand/blueprint/`): a JSON Schema, a validator with semantic checks,
+  a converter from an existing song's MIDI, and an example. Tests are in `tests/offline/test_blueprint.py`.
+- **Separate skills, bundled on the website.** The AI Music Studio and WavRead skills stay in their own repositories,
+  and the MIDI knowledge pages moved to the Studio. `docs/ARCHITECTURE-AND-DELIVERY-PLAN.md` has the split, the
+  bundle proposal, the regression plan and the next phases.
 
 ## v0.6.0-alpha.1 (unreleased)
 

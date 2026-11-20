@@ -1,0 +1,159 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/EZmannBuilds/faderhand/skill/faderhand/blueprint/music_blueprint.v0.schema.json",
+  "title": "Music Production Blueprint v0",
+  "description": "The contract between a planner (the AI Music Studio skill) and an executor (Faderhand). It states musical intent: roles, sections, relationships. It does not state DAW mechanics. Roles are musical functions and are kept separate from DAW tracks: one track can carry several roles, and one role can need several layered tracks.",
+  "type": "object",
+  "required": ["schema_version", "song", "roles", "tracks", "sections"],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": {"const": "0.1"},
+    "song": {
+      "type": "object",
+      "required": ["title", "tempo_bpm", "meter", "length_bars"],
+      "additionalProperties": false,
+      "properties": {
+        "title": {"type": "string", "minLength": 1},
+        "style": {"type": "string", "description": "Free text, e.g. 'dark boom-bap'. Not a template."},
+        "tempo_bpm": {"type": "number", "exclusiveMinimum": 20, "maximum": 400},
+        "meter": {"type": "string", "pattern": "^[0-9]+/[0-9]+$"},
+        "key": {"type": "string"},
+        "length_bars": {"type": "integer", "minimum": 1},
+        "mode": {"enum": ["instrumental", "vocal", "vocal_guide"]}
+      }
+    },
+    "creative_direction": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "focal_element": {"type": "string", "description": "The role that carries the identity, by role id or in words."},
+        "contrast": {"type": "string"},
+        "mood": {"type": "array", "items": {"type": "string"}},
+        "avoid": {"type": "array", "items": {"type": "string"}},
+        "brief": {"type": "string", "description": "The user's brief, in their words where possible."}
+      }
+    },
+    "roles": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "function", "why"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "function": {"enum": ["rhythm", "low_end", "harmony", "melody", "counter_melody", "hook", "texture", "transition", "vocal", "percussion", "other"]},
+          "why": {"type": "string", "minLength": 3, "description": "Why the song needs this role. The arrangement director must be able to justify every part."},
+          "register": {"type": "array", "items": {"type": "integer", "minimum": 0, "maximum": 127}, "minItems": 2, "maxItems": 2}
+        }
+      }
+    },
+    "tracks": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["name", "roles", "instrument"],
+        "additionalProperties": false,
+        "properties": {
+          "name": {"type": "string", "minLength": 1},
+          "roles": {"type": "array", "items": {"type": "string"}, "minItems": 1},
+          "instrument": {
+            "type": "object",
+            "required": ["name"],
+            "additionalProperties": false,
+            "properties": {
+              "name": {"type": "string"},
+              "kind": {"enum": ["drum_rack", "sampler", "synth", "plugin", "audio", "other"]},
+              "browser_uri": {"type": "string"},
+              "patch_file": {"type": "string"},
+              "transpose": {"type": "integer", "description": "Semitones added at execution because the instrument sounds off its written pitch (measured)."},
+              "pad_map": {"type": "object", "additionalProperties": {"type": "integer"}, "description": "GM drum pitch to pad pitch."}
+            }
+          },
+          "layer_of": {"type": "string", "description": "Name of another track this one layers with to make one sound."},
+          "relative_db": {"type": "number", "description": "Level inside its layer group, relative to the group's main track."},
+          "effects": {"type": "array", "items": {"type": "string"}},
+          "midi_track": {"type": "string", "description": "Name of the source track in the song's MIDI file, if any."}
+        }
+      }
+    },
+    "sections": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": ["id", "start_bar", "length_bars", "active_roles"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string", "pattern": "^[a-z][a-z0-9_]*$"},
+          "name": {"type": "string"},
+          "start_bar": {"type": "integer", "minimum": 1},
+          "length_bars": {"type": "integer", "minimum": 1},
+          "energy": {"type": "number", "minimum": 0, "maximum": 1},
+          "active_roles": {"type": "array", "items": {"type": "string"}},
+          "changes": {"type": "array", "items": {"type": "string"}, "description": "What is different from the previous section (layers, density, register, drum pattern, harmony)."},
+          "gesture_before": {"type": "string", "description": "What happens in the bar before this section: fill, drop, stop, riser..."},
+          "harmony": {"type": "array", "items": {"type": "string"}}
+        }
+      }
+    },
+    "relationships": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["roles", "rule"],
+        "additionalProperties": false,
+        "properties": {
+          "roles": {"type": "array", "items": {"type": "string"}, "minItems": 2},
+          "rule": {"enum": ["coordinate_onsets", "avoid_onsets", "complement_phrase_gaps", "call_response", "register_separation", "double", "follow_harmony", "contrast_rhythm"]},
+          "note": {"type": "string"},
+          "measured": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["metric", "value"],
+            "properties": {
+              "metric": {"type": "string"},
+              "value": {"type": "number"},
+              "target": {"type": "array", "items": {"type": "number"}, "minItems": 2, "maxItems": 2}
+            }
+          }
+        }
+      }
+    },
+    "techniques": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["id"],
+        "additionalProperties": false,
+        "properties": {
+          "id": {"type": "string"},
+          "applied_to": {"type": "array", "items": {"type": "string"}},
+          "why": {"type": "string"}
+        }
+      }
+    },
+    "execution": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "daw": {"enum": ["ableton_live", "none"]},
+        "needs": {"type": "array", "items": {"type": "string"}, "description": "Executor capabilities this plan relies on, e.g. 'arrangement_midi_clips', 'drum_rack_chain_volume', 'vital_patch_injection'."},
+        "midi_file": {"type": "string"},
+        "set_file": {"type": "string"}
+      }
+    },
+    "provenance": {
+      "type": "object",
+      "additionalProperties": false,
+      "properties": {
+        "created_by": {"type": "string"},
+        "created": {"type": "string"},
+        "source": {"type": "string"},
+        "version": {"type": "string"},
+        "notes": {"type": "string"}
+      }
+    }
+  }
+}

@@ -4,7 +4,7 @@ Usage (Python 3.10+, mido):
   uv run --no-project --with mido python -I inventory.py <corpus_root> [--workers 2]
 
 Writes <corpus_root>/_inventory/inventory.jsonl (one row per file), duplicates and a summary.
-Approval policy (see the skill's knowledge/PROVENANCE.md):
+Approval policy (see tools/PROVENANCE.md in the Faderhand skill):
   groove   approved        CC BY 4.0 (Google LLC); held-out = the dataset's own "test" split
   mutopia  approved        Public Domain / CC BY / CC BY-SA per piece; held-out = ~12% of pieces by hash
   pdmx     approved only if no licence conflict, PDMX-deduplicated, and either classical/folk/sacred

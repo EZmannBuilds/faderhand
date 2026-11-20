@@ -20,14 +20,14 @@ affiliated, associated, authorized, endorsed by, or in any way officially connec
 The Remote Script uses Live's `_Framework` and Live Object Model, which ship with Live and are not included here.
 Plugin names mentioned in docs and tests (Vital, MeldaProduction, Serum, Arturia and others) belong to their owners.
 
-## Music skill (`skill/faderhand/`)
+## Faderhand skill (`skill/faderhand/`)
 
-- `modules/studio/` is AI Music Studio (c) 2026 EZmannBuilds, PolyForm Noncommercial 1.0.0
-  (https://github.com/EZmannBuilds/ai-music-studio).
-- `modules/wavread/` is the WavRead agent skill (c) 2026 Erik Mann, MIT.
-- The knowledge library contains aggregate statistics computed from these sources. No MIDI from any of them is
-  included.
-  - Groove MIDI Dataset (Google LLC, CC BY 4.0; Gillick et al., ICML 2019).
-  - PDMX (Long et al., CC BY 4.0; per-score public domain or CC0).
-  - Mutopia Project editions (public domain, CC BY, CC BY-SA; credited per piece in
-    `skill/faderhand/modules/knowledge/PROVENANCE.md`).
+The checker's ranges and the evaluation references are aggregate statistics computed from the sources below. No MIDI
+from any of them is included.
+- Groove MIDI Dataset (Google LLC, CC BY 4.0; Gillick et al., ICML 2019).
+- PDMX (Long et al., CC BY 4.0; each score public domain or CC0).
+- Mutopia Project editions (public domain, CC BY or CC BY-SA, credited per piece in
+  `skill/faderhand/tools/PROVENANCE.md`).
+
+The AI Music Studio (PolyForm Noncommercial 1.0.0) and WavRead (MIT) skills are separate projects and are not included
+here.

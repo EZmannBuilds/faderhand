@@ -9,11 +9,7 @@ tests/results/
 .DS_Store
 .pytest_cache/
 
-# Universal music skill: user profiles and local runs never leave the machine
-skill/faderhand/modules/studio/profiles/local/*
-!skill/faderhand/modules/studio/profiles/local/README.md
+# Faderhand skill: local-only files never leave the machine
 skill/faderhand/**/*.local.yaml
 skill/faderhand/**/*.local.json
-skill/faderhand/modules/studio/evals/reports/runs/
 __pycache__/
-skill/faderhand/modules/knowledge/local/
