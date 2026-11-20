@@ -68,9 +68,30 @@ Duplicate instructions are gone:
     sections change by energy and the odd added part, not by subtraction. That is the first thing the arrangement
     director has to fix.
 
+## 3b. Blueprint 0.2 (done, from planning review on 2026-11-20)
+
+Before the arrangement experiment, the schema gained:
+- role states per section (full, reduced, featured or silent), with layer selection;
+- timed events inside sections;
+- an energy strategy;
+- section-scoped relationships;
+- preservation rules;
+- observed, inferred or proposed basis labels.
+
+All of these are optional, so 0.1 blueprints stay valid. Four more offline tests cover them.
+
 ## 4. Next phases (planned, in order)
 
-1. **Arrangement Director v0 (Studio plans, Faderhand executes).**
+1. **Arrangement Director v0 (Studio plans, Faderhand executes): the Cold Brick A/B/C experiment.**
+   - A is the original, untouched. B is subtractive: the same material, but roles and layers enter, leave and return.
+     C is B plus motif development, fills and changing relationships.
+   - Frozen: the approved Vital 808, the stab stack and the hook harmony.
+   - Each change carries a reason and an intended audible effect.
+   - A dry-run execution plan comes before Live is touched. The scratch Sets leave the original intact.
+   - Renders are level-matched and blind.
+   - The checker doesn't pick the winner; the owner's listening does.
+   - Report: original and revised blueprints, the changes section by section, the execution log, checker results,
+     and the renders.
    - Input: *Cold Brick*'s blueprint and brief.
    - Output: one revised blueprint that justifies every role and changes the active roles at section boundaries
      (subtraction, substitution, entries), plus the Live build of it as a scratch version. The current Set is

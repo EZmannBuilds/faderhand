@@ -51,6 +51,48 @@ def validate(bp):
         for r in s['active_roles']:
             if r not in R:
                 errors.append('section %r activates unknown role %r' % (s['id'], r))
+    # 0.2: role states, events, section relationships, preservation
+    tracks_of = {r: [t['name'] for t in bp['tracks'] if r in t['roles']] for r in roles}
+    S_ids = set(sects)
+    for s in bp['sections']:
+        act = set(s['active_roles'])
+        for rs in s.get('role_states', []):
+            r = rs['role']
+            if r not in R:
+                errors.append('section %r: state for unknown role %r' % (s['id'], r)); continue
+            if rs['state'] == 'silent' and r in act:
+                errors.append('section %r: role %r is silent but listed as active' % (s['id'], r))
+            if rs['state'] != 'silent' and r not in act:
+                errors.append('section %r: role %r is %s but not listed as active' % (s['id'], r, rs['state']))
+            for layer in rs.get('active_layers', []):
+                if layer not in tracks_of.get(r, []):
+                    errors.append('section %r: %r is not a layer (track) of role %r' % (s['id'], layer, r))
+        for ev in s.get('events', []):
+            for r in ev.get('roles', []):
+                if r not in R:
+                    errors.append('section %r: event %s names unknown role %r' % (s['id'], ev['type'], r))
+            for layer in ev.get('layers', []):
+                if layer not in tracks:
+                    errors.append('section %r: event %s names unknown track %r' % (s['id'], ev['type'], layer))
+            end = (ev['at_bar'] - 1) * 4 + ev['length_beats']
+            if ev['at_bar'] >= s['length_bars'] + 1 or end > s['length_bars'] * 4 + 1e-9:
+                errors.append('section %r: event %s at bar %s runs outside the section' % (s['id'], ev['type'], ev['at_bar']))
+            if ev.get('target_section') and ev['target_section'] not in S_ids:
+                errors.append('section %r: event targets unknown section %r' % (s['id'], ev['target_section']))
+        for rel in s.get('relationships', []):
+            for r in rel['roles']:
+                if r not in R:
+                    errors.append('section %r: relationship %s names unknown role %r' % (s['id'], rel['rule'], r))
+    for pv in bp.get('preservation', []):
+        for r in pv.get('roles', []):
+            if r not in R:
+                errors.append('preservation names unknown role %r' % r)
+        for t in pv.get('tracks', []):
+            if t not in tracks:
+                errors.append('preservation names unknown track %r' % t)
+        for x in pv.get('sections', []):
+            if x not in S_ids:
+                errors.append('preservation names unknown section %r' % x)
     for rel in bp.get('relationships', []):
         for r in rel['roles']:
             if r not in R:

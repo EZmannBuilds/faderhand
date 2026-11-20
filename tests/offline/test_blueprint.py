@@ -57,3 +57,39 @@ def test_unused_role_is_a_warning_not_an_error():
     bp['roles'].append({'id': 'pad', 'function': 'texture', 'why': 'air above the keys'})
     e, w = vb.validate(bp)
     assert e == [] and any("'pad' has no track" in x for x in w)
+
+
+# --- 0.2 extensions: role states, events, preservation ---------------------------------------------
+
+def v02():
+    bp = copy.deepcopy(EXAMPLE)
+    bp['schema_version'] = '0.2'
+    return bp
+
+
+def test_role_state_must_match_active_roles():
+    bp = v02()
+    bp['sections'][0]['role_states'] = [{'role': 'keys', 'state': 'silent'}]   # keys is active in the verse
+    assert any('silent but listed as active' in e for e in errs(bp))
+
+
+def test_role_state_layers_must_belong_to_the_role():
+    bp = v02()
+    bp['sections'][1]['role_states'] = [{'role': 'lead_hook', 'state': 'reduced', 'active_layers': ['Bass']}]
+    assert any('is not a layer' in e for e in errs(bp))
+
+
+def test_event_outside_the_section_is_an_error():
+    bp = v02()
+    bp['sections'][0]['events'] = [{'type': 'fill', 'at_bar': 8, 'length_beats': 8}]
+    assert any('runs outside the section' in e for e in errs(bp))
+
+
+def test_valid_v02_extensions_pass():
+    bp = v02()
+    bp['sections'][1]['role_states'] = [{'role': 'lead_hook', 'state': 'featured', 'reason': 'the hook arrives'}]
+    bp['sections'][0]['events'] = [{'type': 'pre_transition', 'at_bar': 8, 'length_beats': 4, 'roles': ['hats'],
+                                    'target_section': 'hook'}]
+    bp['sections'][1]['energy_strategy'] = {'rhythm': 'up', 'density': 'up', 'register': 'same'}
+    bp['preservation'] = [{'what': 'groove', 'roles': ['kick', 'bass'], 'rule': 'frozen', 'reason': 'approved'}]
+    assert errs(bp) == []
