@@ -44,6 +44,7 @@ work; Faderhand only executes. What happened:
   swapped for recorded cello samples in a scratch copy (A3).
   - Pitch was checked, the level was matched in the bridge, and the A3 master is waiting for a listen.
   - Lesson: the Hyper Medz presets ship in Trigger envelope mode. Check it on every one before use.
+  - The owner on A3: "Sounds right."
 - **Disk:** the Data volume hit 100% mid-render and one Live export failed. The cause found: Live's earlier exports
   (18–19 Nov) had also written per-track side files, 12 GB, into the other session's render folder. Reported; not
   deleted without the owner's OK.
