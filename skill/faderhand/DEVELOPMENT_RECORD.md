@@ -31,6 +31,13 @@ work; Faderhand only executes. What happened:
   everything slows down and stops". That passage is the verse-1 stab dropout: the ringing chord, then a hole. The
   measurement had predicted that failure. Lesson for the director: check how each instrument behaves on note-off
   before planning silence.
+- **Round 2: the stab ring switched off on the owner's word.** Copies of A, B and C were made with the stab
+  envelopes out of Trigger mode; the files differ only in those three values.
+  - After re-rendering, the gaps go silent within a beat.
+  - The stab stem lost 5.6 dB of held bed. One shared Stabs gain (+5.64 dB) for all three keeps hook 1 at its
+    approved level.
+  - Intro and bridge contrast now shows in loudness: B2 and C2 sit 1.8 and 0.7–1.2 LU under A2.
+  - A new blind pack is waiting for the owner's listen.
 - **Disk:** the Data volume hit 100% mid-render and one Live export failed. The cause found: Live's earlier exports
   (18–19 Nov) had also written per-track side files, 12 GB, into the other session's render folder. Reported; not
   deleted without the owner's OK.
