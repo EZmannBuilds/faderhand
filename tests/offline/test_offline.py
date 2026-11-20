@@ -3,7 +3,7 @@
 - Both Remote Script modules and every tool compile.
 - The MCP server imports and registers its tools with valid schemas.
 - tools/audio_check.py measures a synthetic file correctly.
-run: uv run --with "mcp[cli]>=1.9,<2" --with numpy --with soundfile --with pyloudnorm --with scipy --with pytest pytest tests/offline
+run: uv run --with "mcp[cli]>=1.9,<2" --with numpy --with soundfile --with pyloudnorm --with scipy --with mido --with jsonschema --with pytest pytest tests/offline
 """
 import asyncio, glob, importlib.util, json, os, py_compile, subprocess, sys
 
