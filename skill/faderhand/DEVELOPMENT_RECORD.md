@@ -4,6 +4,33 @@ Started 2026-11-18, branch `feat/universal-music-skill` in `this repository`. Do
 **done**. Items still open are marked **open**, and the ones waiting on the owner are marked **decision**.
 
 
+## 2026-11-20: Arrangement Director v0 test on Cold Brick (A/B/C)
+
+The owner approved ChatGPT's experiment ("Yes, start it"):
+- A is the song unchanged;
+- B is subtractive (the same notes; roles and layers leave, thin out and return);
+- C is B plus small composed development.
+
+The director and executor are song-specific scripts kept with the song, not in this repo. The director is Studio
+work; Faderhand only executes. What happened:
+- **Plan:** B and C were written as 0.2 blueprints, with role states, events, energy strategy computed from the
+  planned notes, preservation, and a reason and a `proposed` basis on every change. Both validate. A dry run listed
+  every note change per section and track before Live was touched.
+- **Caught before building:** C's planned snare builds into the hooks would have doubled fills already in the drums
+  (observed in bars 8, 24, 44, 52 and 60). They were dropped. Four of five planned open-hat lifts had nothing to
+  replace, so the executor skipped them and logged it.
+- **Execution:** the approved Set was copied twice. Each scratch Set was rewritten, saved, and read back from the
+  `.als` on disk: 0 mismatches. The approved Set's hash was unchanged. All 36 planned changes check out against the
+  saved notes. The checker passes A, B and C alike (it is not the judge).
+- **Measurement found what the notes couldn't:** the stab gaps are not silent in the audio. The stab samplers' volume
+  envelope is in Trigger mode, so note-off is ignored and each bowed hit rings for its whole 4–5 s sample. The gaps
+  fill with the dying chord. The rule went into `daw/README.md`.
+- **Level-matched blind pack made:** -12.96 LUFS, same mix gains and master chain. The listen and the
+  keep-or-fix-the-ring decision are the owner's.
+- **Disk:** the Data volume hit 100% mid-render and one Live export failed. The cause found: Live's earlier exports
+  (18–19 Nov) had also written per-track side files, 12 GB, into the other session's render folder. Reported; not
+  deleted without the owner's OK.
+
 ## 2026-11-20: rescoped into separate skills
 
 The owner decided to keep the studio skill and Faderhand separate, bundled on the WavRead website. Planning with

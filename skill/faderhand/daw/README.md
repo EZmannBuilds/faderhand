@@ -68,6 +68,19 @@ record_arrangement_automation(track="Lead", target={"device": "Auto Filter", "pa
 Live's Export dialog where it is installed. Then analyse the file with WavRead (the separate WavRead skill, if installed) or
 `tools/audio_check.py` in this repo.
 
+## Check what a sampler does on note-off before planning silence
+
+Live's Sampler has a volume-envelope loop mode. In **Trigger** mode (`LoopMode` 4 in the `.als`), note-off is
+ignored: every hit plays its whole sample. Some sampled-orchestra presets ship this way. A "stab" on a sustained
+string patch then rings for seconds. Only the voice limit cuts it off.
+
+While the part plays every bar, you can't hear this. But a planned dropout, stop or gap fills with the previous
+hits dying away.
+
+- **Before an arrangement plan relies on silence:** read the instrument's envelope (`get_device_parameters`, or the
+  `.als`).
+- **After rendering:** measure the stem inside each planned gap. Don't trust the notes alone.
+
 ## Where MIDI notes come from
 
 Faderhand creates Arrangement MIDI clips (`create_arrangement_midi_clip`) and edits clips. To place a MIDI file
