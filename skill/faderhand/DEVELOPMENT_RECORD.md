@@ -37,7 +37,8 @@ its notes". The owner said "Start the audition". The tool is `tools/audition.py`
   The Grand takes 26 ms to speak, against the e-piano's 3 ms, so its off-beat chords land about 80 ms late, about
   40% of a 16th at 76 BPM. A sound swap changes the feel when the attack differs. When a part is played behind the
   beat, measure the onset rise of each candidate and offset its notes to allow for it.
-- **open:** retest b1s05 with the Grand and the keys' lateness reduced; write new melodic material for b1s02.
+- **skipped (owner, 2026-11-21):** retesting b1s05 with the Grand and less lateness in the keys, and new melodic
+  material for b1s02. The owner's view: "Faderhand works better with electronic music."
 
 ## 2026-11-21: Composition Learning Batch v1 rated (one listener, blind)
 
