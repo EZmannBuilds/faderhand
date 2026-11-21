@@ -1,5 +1,18 @@
 # Changelog
 
+## Unreleased: the Faderhand skill (development)
+
+- **`skill/faderhand/`: the Faderhand agent skill.**
+  - Live recipes and safety (`daw/`) and calibrated Vital units (`vital/`).
+  - `tools/midi_check.py` measures MIDI against genre ranges from a licensed corpus and lists revisions.
+  - Corpus tools to rebuild those numbers (`tools/corpus/`).
+  - A ten-task benchmark with results (`evaluation/`).
+- **Music Production Blueprint v0** (`skill/faderhand/blueprint/`): a JSON Schema, a validator with semantic checks,
+  a converter from an existing song's MIDI, and an example. Tests are in `tests/offline/test_blueprint.py`.
+- **Separate skills, bundled on the website.** The AI Music Studio and WavRead skills stay in their own repositories,
+  and the MIDI knowledge pages moved to the Studio. `docs/ARCHITECTURE-AND-DELIVERY-PLAN.md` has the split, the
+  bundle proposal, the regression plan and the next phases.
+
 ## v0.6.0-alpha.1 (unreleased)
 
 - **Renamed to Faderhand, for Ableton Live 12.** The control script folder and class are now `Faderhand`

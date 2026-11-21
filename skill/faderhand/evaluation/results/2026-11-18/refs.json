@@ -1,0 +1,45 @@
+{
+ "funk": {
+  "files": 41,
+  "snare_timing_sd_ms": [
+   12.59,
+   36.23
+  ],
+  "hat_timing_sd_ms": [
+   11.119,
+   31.421
+  ],
+  "kick_timing_sd_ms": [
+   13.96,
+   30.34
+  ],
+  "quantized_share": [
+   0.055,
+   0.19
+  ],
+  "snare_ghost_per_bar": [
+   0.0,
+   4.63
+  ],
+  "hat_position_structure": [
+   0.161,
+   0.763
+  ],
+  "hat_vel_sd": [
+   8.58,
+   26.95
+  ],
+  "snare_vel_sd": [
+   5.8,
+   45.9
+  ]
+ },
+ "trap": {
+  "files": 2,
+  "backbeat_3": null,
+  "hat_rolls_per_bar": null,
+  "hat_position_structure": null,
+  "bass_on_kick": null,
+  "808_per_bar": null
+ }
+}

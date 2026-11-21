@@ -9,4 +9,4 @@ jobs:
       - uses: actions/checkout@v4
       - uses: astral-sh/setup-uv@v6
       - name: Offline tests (no Ableton Live needed)
-        run: uv run --python 3.12 --with "mcp[cli]>=1.9,<2" --with numpy --with soundfile --with pyloudnorm --with scipy --with pytest pytest -q tests/offline
+        run: uv run --python 3.12 --with "mcp[cli]>=1.9,<2" --with numpy --with soundfile --with pyloudnorm --with scipy --with mido --with jsonschema --with pytest pytest -q tests/offline

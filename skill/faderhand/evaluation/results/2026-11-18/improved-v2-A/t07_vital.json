@@ -1,0 +1,8 @@
+{
+  "unison_detune": 1.143,
+  "volume": 4612,
+  "reverb_decay_time": 1.585,
+  "delay_frequency": 1.415,
+  "osc_1_tune": 0.25,
+  "basis": "Calibrated units in the skill's modules/vital/README.md (Vital 1.0.7 renders): unison_detune 17.5 cents per unit linear -> 20/17.5; volume 5473 = 0 dB default, log-interpolated toward 4400 = -7.65 dB -> -6 dB; reverb_decay_time = log2(seconds); delay_frequency = log2(1/seconds) with sync off; osc_1_tune in semitones -> +25 cents = 0.25."
+}

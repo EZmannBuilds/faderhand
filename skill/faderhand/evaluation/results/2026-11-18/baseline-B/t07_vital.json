@@ -1,0 +1,8 @@
+{
+  "unison_detune": 4.472136,
+  "volume": 4621.2804,
+  "reverb_decay_time": 1.584963,
+  "delay_frequency": 1.415037,
+  "osc_1_tune": 0.25,
+  "basis": "reverb_decay_time = log2(3 s), matching the pack's measured 12-unit log2-seconds span (SYNTH_WORKSHOP/FIELD_TEST.md); the rest are from Vital's parameter scalings as I know them, not verified against an install: volume is sqrt-scaled dB (dB = sqrt(raw) - 80, default 5473.0404 = -6.02 dB, so -6 dB more = (73.98 - 6)^2), unison_detune is quadratic (display = raw^2 as spread, 20 cents -> sqrt(20); if the display is +/- per voice it would be sqrt(10) = 3.162278), delay_frequency is Hz = 2^raw (375 ms = 2.6667 Hz), osc_1_tune is semitones (+25 cents = 0.25)"
+}

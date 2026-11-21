@@ -1,0 +1,26 @@
+{
+ "title": "Evaluation fixture: comprehension", "style": "swung hip-hop loop (test material)", "key": "D minor",
+ "brief": "16 bars written for the benchmark: a verse texture, then a fuller hook where the lead enters and the hats double.",
+ "focal_element": "lead_hook", "contrast": "8th hats and no lead in the verse; 16th swung hats and a lead in the hook",
+ "sections": [{"name": "Verse", "start_bar": 1}, {"name": "Hook", "start_bar": 9}],
+ "roles": [
+  {"id": "kick", "function": "rhythm", "why": "the downbeat anchor the bass locks to", "source": {"midi_track": "Drums", "pitches": [36]}},
+  {"id": "snare", "function": "rhythm", "why": "the backbeat", "source": {"midi_track": "Drums", "pitches": [38]}},
+  {"id": "hats", "function": "rhythm", "why": "time feel; doubling to swung 16ths is the hook's lift", "source": {"midi_track": "Drums", "pitches": [42]}},
+  {"id": "bass", "function": "low_end", "why": "roots with the kick, plus a pickup into each chord", "source": {"midi_track": "Bass"}},
+  {"id": "keys", "function": "harmony", "why": "the four-chord cycle held under everything", "source": {"midi_track": "Keys"}},
+  {"id": "lead_hook", "function": "hook", "why": "a short cell that marks the hook", "source": {"midi_track": "Lead"}}
+ ],
+ "tracks": [
+  {"name": "Drums", "roles": ["kick", "snare", "hats"], "midi_track": "Drums", "instrument": {"name": "any GM drum kit", "kind": "drum_rack"}},
+  {"name": "Bass", "roles": ["bass"], "midi_track": "Bass", "instrument": {"name": "any bass", "kind": "sampler"}},
+  {"name": "Keys", "roles": ["keys"], "midi_track": "Keys", "instrument": {"name": "any electric piano", "kind": "sampler"}},
+  {"name": "Lead", "roles": ["lead_hook"], "midi_track": "Lead", "instrument": {"name": "any lead", "kind": "synth"}}
+ ],
+ "relationships": [
+  {"roles": ["bass", "kick"], "rule": "coordinate_onsets"},
+  {"roles": ["lead_hook", "keys"], "rule": "register_separation"}
+ ],
+ "execution": {"daw": "ableton_live", "midi_file": "comprehension.mid", "needs": ["arrangement_midi_clips", "browser_load", "midi_check"]},
+ "version": "v0 example"
+}

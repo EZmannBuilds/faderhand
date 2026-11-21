@@ -1,0 +1,66 @@
+{
+  "setA": {
+    "T03": {
+      "A": {"groove_feel": 7, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 7},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 6, "musicality": 6},
+      "preferred": "A",
+      "reason": "A's 808 matches the kick exactly in every bar (bar 1 at 0/6/10, bar 3 at 0/6/9/14) and uses octave jumps plus an E1 leading tone in bar 8. Its hat rolls change from bar to bar (triplet, 32nd and ramped 16ths) and bar 8 ends on a clap-roll turnaround. In B the rolls land every second bar with velocities fixed at 98/86, the 808 adds hits off the kick (steps 4 and 9 in bar 1), and the lead only alternates between velocities 100 and 88."
+    },
+    "T04": {
+      "A": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 6, "musicality": 6},
+      "B": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 8},
+      "preferred": "B",
+      "reason": "B plays the hats the way a drummer does: on-beat strokes at 82-94, off-16ths at 51-65 and slightly late. It opens the hat on the 'a' of 4 and closes it with the pedal on the next downbeat (bars 2-3), and bar 4 has a snare flam into toms. A's hat velocities jump around with no accent shape (bar 1 step 0 at 55, step 8 at 90, step 15 at 27), so it sounds randomised rather than played."
+    },
+    "T05": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 8, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 8, "genre_authenticity": 8, "development": 6, "interplay": 7, "musicality": 7},
+      "preferred": "A",
+      "reason": "In what the dump shows (it cuts off after about bar 48-51), A has a clear arc: rimshot intro, verse with the bass reharmonising the keys (F under Abmaj7 = Fm9, Bb under Db = Bbm9), a hook with new chords, and a half-time bridge at bars 41-48 with new harmony. B's swung boom-bap pocket is just as good (kick on 7 at +30-40ms, laid-back snare), but its drums and bass barely change between sections; hook and verse differ mainly by the chords and the shaker."
+    },
+    "T06": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 9, "musicality": 8},
+      "B": {"groove_feel": 7, "genre_authenticity": 8, "development": 7, "interplay": 7, "musicality": 7},
+      "preferred": "A",
+      "reason": "A's bass doubles the dragged kick almost note for note (bar 2: kick 0/3+28ms/10/15+18ms, bass 0/3+37ms/10/15+24ms). The EP voicings are rolled, sparse and sit below C4, with a C7#9 in bar 6 and a G7b9 turnaround, so a vocal has room. B has richer harmony (a Db9 tritone sub in bar 6) and a melodic bass, but its sustained 5-note voicings reach up to Bb4 in the vocal range, and its hat timing is loose (+48/-22ms) without a consistent shape."
+    },
+    "T10": {
+      "A": {"groove_feel": 8, "genre_authenticity": 7, "development": 8, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 7, "genre_authenticity": 7, "development": 7, "interplay": 7, "musicality": 7},
+      "preferred": "A",
+      "reason": "A builds an arc: side-stick bars 1-2, snare enters in bar 3, crash and ghost notes from bar 5, tom fill in bar 8, and kick and lead velocities rise to a peak in bar 7. The bass sits on the kick in every bar (0/7/10, and 13 in bar 6) and walks G-A-Ab back to the top. Both versions keep the protected pitches; B's lead dips to 58-64 in bar 6 just as the drums intensify, and its bar 4 bass on step 7 lands 22ms behind the kick."
+    }
+  },
+  "setB": {
+    "T03": {
+      "A": {"groove_feel": 7, "genre_authenticity": 8, "development": 8, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 6, "interplay": 7, "musicality": 7},
+      "preferred": "A",
+      "reason": "A's 808 matches the kick exactly (bar 2 at 0/3/6/14) and moves C-Ab-G with a dark Db (bII) in bar 7. Bar 3 drops to half-time hats with an open hat, and bar 8 builds a 32nd/triplet hat ramp with a 58-108 snare roll. The lead has grace-note flicks and climbs to C6 in bar 5. B's sparse offbeat pluck lead is idiomatic, but its hat rolls are copied (bar 2 = bar 6, bar 3 = bar 7), velocities are fixed at 104/88/96, and the 808 adds hits off the kick."
+    },
+    "T04": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 5, "genre_authenticity": 6, "development": 6, "interplay": 6, "musicality": 5},
+      "preferred": "A",
+      "reason": "A has a coherent drummer's feel: quarter/8th/16th hat accents (106/82/62), off-16ths a consistent 9-15ms late, a laid-back snare, open hat closed by the pedal, a snare flam in bar 4 and a tom fill. B's hats drop to inaudible velocities (14-16) with random ±40ms scatter (bar 2 step 4 at -42ms), and some backbeats rush (-10ms), so it reads as sloppy jitter rather than a pocket."
+    },
+    "T05": {
+      "A": {"groove_feel": 5, "genre_authenticity": 6, "development": 7, "interplay": 6, "musicality": 6},
+      "B": {"groove_feel": 8, "genre_authenticity": 8, "development": 8, "interplay": 8, "musicality": 8},
+      "preferred": "B",
+      "reason": "A is copy-pasted: hats stay at exactly 70/54 and kicks at 106/92 bar after bar, the bass repeats one 4-bar loop with identical velocities, and the bridge uses linear ramps (rimshot 74 to 84, snare roll 44 to 106 in bars 43-44). B varies its played drums (rimshot intro, crash into verse at bar 9, swung 16th hats in the hook, half-time bridge with arpeggiated keys at bars 41-48). Its bass walks a cycle of fourths under the keys and drives with octave pops in the hook."
+    },
+    "T06": {
+      "A": {"groove_feel": 8, "genre_authenticity": 8, "development": 7, "interplay": 8, "musicality": 7},
+      "B": {"groove_feel": 7, "genre_authenticity": 8, "development": 5, "interplay": 8, "musicality": 7},
+      "preferred": "A",
+      "reason": "A develops: side-stick backbeat in bars 1-4 switches to snare in bars 5-8, the bass varies its pickups (bar 5 Ab1 on step 3 at +46ms) and locks to the dragged kick, and the fills grow toward a G7b9 lick in bar 8. B has a lovely IV-iii-ii-V with a B7b9 in bar 6 and low, rolled comping that leaves room for a vocal. But it is the same 4-bar loop played twice, with hats that repeat 81/63/47 every bar, while A's EP pads sustain up to C5 and are rather static."
+    },
+    "T10": {
+      "A": {"groove_feel": 8, "genre_authenticity": 7, "development": 9, "interplay": 8, "musicality": 8},
+      "B": {"groove_feel": 6, "genre_authenticity": 7, "development": 7, "interplay": 8, "musicality": 6},
+      "preferred": "A",
+      "reason": "A gives the 8 bars three textures (8th hats, then ride in bars 5-6 with an 8th-note driving bass, then 16th hats in bar 7) and peaks the lead at velocity 112 with a held G in bar 7. It also reshapes the hook's rhythm while keeping its pitches. B's bass is tight with the kick, but its 'humanising' is formulaic: kick velocity climbs +1 per bar (96 to 105), the hats repeat 93/55/72/56 per beat, the bar 4 roll is a linear 58/70/84/98, and timing stays within ±8ms."
+    }
+  }
+}

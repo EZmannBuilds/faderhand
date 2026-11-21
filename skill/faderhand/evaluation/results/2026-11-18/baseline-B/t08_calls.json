@@ -1,0 +1,189 @@
+[
+  {
+    "tool": "tooling_info",
+    "args": {}
+  },
+  {
+    "tool": "write_status",
+    "args": {}
+  },
+  {
+    "tool": "get_set_identity",
+    "args": {}
+  },
+  {
+    "tool": "list_tracks",
+    "args": {
+      "devices": true
+    }
+  },
+  {
+    "tool": "list_return_tracks",
+    "args": {}
+  },
+  {
+    "tool": "create_return_track",
+    "args": {
+      "name": "Plate"
+    }
+  },
+  {
+    "tool": "load_effect_on_return_track",
+    "args": {
+      "ret": "Plate",
+      "effect": "Reverb"
+    }
+  },
+  {
+    "tool": "get_return_track_devices",
+    "args": {
+      "ret": "Plate"
+    }
+  },
+  {
+    "tool": "set_track_send",
+    "args": {
+      "track": "Keys",
+      "send": "Plate",
+      "db": -14
+    }
+  },
+  {
+    "tool": "get_track_sends",
+    "args": {
+      "track": "Keys"
+    }
+  },
+  {
+    "tool": "load_effect",
+    "args": {
+      "track": "Bass",
+      "effect": "Compressor"
+    }
+  },
+  {
+    "tool": "inspect_device_sidechain",
+    "args": {
+      "track": "Bass",
+      "device": "Compressor"
+    }
+  },
+  {
+    "tool": "set_sidechain",
+    "args": {
+      "track": "Bass",
+      "device": "Compressor",
+      "source": "Kick",
+      "on": true,
+      "params": {
+        "Threshold": "-24 dB",
+        "Ratio": "4",
+        "Attack": "1 ms",
+        "Release": "120 ms"
+      }
+    }
+  },
+  {
+    "tool": "inspect_device_sidechain",
+    "args": {
+      "track": "Bass",
+      "device": "Compressor"
+    }
+  },
+  {
+    "tool": "load_effect",
+    "args": {
+      "track": "Lead",
+      "effect": "Auto Filter"
+    }
+  },
+  {
+    "tool": "get_device_parameters",
+    "args": {
+      "track": "Lead",
+      "device": "Auto Filter"
+    }
+  },
+  {
+    "tool": "list_automatable_parameters",
+    "args": {
+      "track": "Lead"
+    }
+  },
+  {
+    "tool": "set_arm",
+    "args": {
+      "track": "Lead",
+      "arm": false
+    }
+  },
+  {
+    "tool": "record_arrangement_automation",
+    "args": {
+      "track": "Lead",
+      "target": {
+        "device": "Auto Filter",
+        "parameter": "Frequency"
+      },
+      "points": [
+        {
+          "at": "17.1.1",
+          "value": "300 Hz"
+        },
+        {
+          "at": "18.1.1",
+          "value": "452 Hz"
+        },
+        {
+          "at": "19.1.1",
+          "value": "682 Hz"
+        },
+        {
+          "at": "20.1.1",
+          "value": "1.03 kHz"
+        },
+        {
+          "at": "21.1.1",
+          "value": "1.55 kHz"
+        },
+        {
+          "at": "22.1.1",
+          "value": "2.34 kHz"
+        },
+        {
+          "at": "23.1.1",
+          "value": "3.52 kHz"
+        },
+        {
+          "at": "24.1.1",
+          "value": "5.31 kHz"
+        },
+        {
+          "at": "25.1.1",
+          "value": "8 kHz"
+        }
+      ],
+      "units": "display",
+      "preroll_bars": 1,
+      "wait": true
+    }
+  },
+  {
+    "tool": "back_to_arrangement",
+    "args": {}
+  },
+  {
+    "tool": "param_state",
+    "args": {
+      "track": "Lead",
+      "target": {
+        "device": "Auto Filter",
+        "parameter": "Frequency"
+      }
+    }
+  },
+  {
+    "tool": "validate_routing",
+    "args": {}
+  }
+]

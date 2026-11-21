@@ -207,6 +207,19 @@ slots, rack macro mapping) are not part of this release.
 
 Planned work: [ROADMAP.md](ROADMAP.md).
 
+## The Faderhand skill
+
+`skill/faderhand/` is the agent skill for this server. It covers:
+- driving Live through these tools;
+- measuring MIDI against genre ranges taken from a licensed corpus (`midi_check.py`);
+- validating and executing Music Production Blueprints;
+- setting Vital patches with calibrated units.
+
+It is installed separately from its companions, the AI Music Studio skill (composition planning) and the WavRead
+skill (analysis reports). The three are meant to be bundled on the WavRead website. See
+[skill/faderhand/README.md](skill/faderhand/README.md) and
+[docs/ARCHITECTURE-AND-DELIVERY-PLAN.md](docs/ARCHITECTURE-AND-DELIVERY-PLAN.md).
+
 ## Development
 
 - Offline tests:
