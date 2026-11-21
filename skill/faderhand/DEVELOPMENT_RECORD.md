@@ -4,6 +4,29 @@ Started 2026-11-18, branch `feat/universal-music-skill` in `this repository`. Do
 **done**. Items still open are marked **open**, and the ones waiting on the owner are marked **decision**.
 
 
+## 2026-11-20: Composition Learning Batch v1 built (8 songs, 16 renders)
+
+This is ChatGPT's next step after the Cold Brick test. The owner started it ("Start the pilot", then "Start all 8
+songs", "Continue the rest") and made every song a pair: a baseline arrangement and an Arrangement Director version
+of the same music. The work is local, outside the repo: briefs, a frozen setup, blueprints, Sets, stems, masters,
+blind copies, and a private Listening Room page whose database holds the ratings.
+
+**What the pilot taught the executor:**
+- Every Hyper Medz Sampler preset ships in Trigger envelope mode, so note-off copies were made.
+- A recorded kit's soft layers are close to inaudible; `preflight.py occupancy` caught a silent bridge.
+- Same-pitch hits within 20 ticks merge in Live, and the read-back caught it.
+- Plucked basses and dry kits have crest factors of 20–25 dB. They need per-stem peak control before the mix, or
+  the limiter crushes the master.
+- A Live dialog left open by another session blocks export ("menu item ... is disabled"); check for dialogs first.
+- Autocorrelation pitch checks fail on distorted or chordal parts; a test for energy below the written fundamental
+  settles real octave errors.
+
+**The owner's first notes:**
+- "01 needs a more diverse set of piano notes. some high some low": the piano now moves through registers by section.
+  The same register rule became a planning rule for the rest of the batch.
+
+Ratings are pending.
+
 ## 2026-11-20: Arrangement Director v0 test on Cold Brick (A/B/C)
 
 The owner approved ChatGPT's experiment ("Yes, start it"):
