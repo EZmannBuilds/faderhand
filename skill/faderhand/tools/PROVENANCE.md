@@ -11,10 +11,7 @@ Where every number in the MIDI knowledge library (now in the AI Music Studio ski
 | Groove MIDI Dataset v1.0.0 | magenta.tensorflow.org/datasets/groove (MIDI-only zip) | CC BY 4.0, Google LLC | 1150 | approved | 1017 / 128 (the dataset's own test split) |
 | Mutopia Project, curated selection | mutopiaproject.org, one page per piece | Public Domain, CC BY 3.0/4.0, CC BY-SA 2.5–4.0 (per piece, below) | 163 MIDI files from 60 pieces | approved | 136 / 14 |
 | PDMX (Zenodo record 15571083), MIDI archive | zenodo.org | dataset CC BY 4.0; each score Public Domain mark or CC0 per MuseScore metadata | 254077 listed, 254035 present | approved: 43154; excluded: 31221 licence conflict, 145502 PDMX duplicates, 34200 pop/rock/hip-hop/jazz/soundtrack/untagged arrangements that may copy copyrighted songs | 3805 / 195 (a 4,000-file sample of the approved set) |
-| Zynthion free MIDI packs (13 packs) | zynthion.com/free/*, email-gated download link | Zynthion licence: royalty-free use in your own music; no reselling or redistributing the files | 2680 | **pending clearance**: the licence covers making music, not building software from the files. Analysed on this machine only; its numbers stay in the Studio skill's `shared/MIDI_KNOWLEDGE/local/` (gitignored) | 715 / 108 after removing FL per-drum splits, duplicates and transpositions |
 | Slakh2100 | slakh.com | CC BY 4.0 | 0 | not downloaded: its MIDI ships only inside a ~105 GB audio archive, more than the free disk space | – |
-
-Zynthion packs taken: 808 MIDI and hi-hat rolls, arp, bass, melody, drum patterns, drum fills, and the deep house, EDM, house, lo-fi, techno, trance and trap genre packs. The genre packs each include a "Chords and bass" folder; those chord parts were used only as harmonic context for the bass analysis. The chord-progression and chords-and-scales collections were not downloaded.
 
 ## Dedup and validation
 
@@ -23,18 +20,17 @@ Zynthion packs taken: 808 MIDI and hi-hat rolls, arp, bass, melody, drum pattern
 | groove | 1 | 4 | 0 | 0 | 0 |
 | mutopia | 6 | 0 | 7 | 0 | 0 |
 | pdmx | 41074 | 196 | 54 | 0 | 42 |
-| zynthion | 387 | 329 | 1009 | 0 | 0 |
 
 Analysis skips duplicates, same-note copies and transpositions, so one pattern in twelve keys counts once.
 
 ## Held out for evaluation
 
-Files flagged `holdout` never feed the statistics in `stats/`: the Groove test split, about 12% of Mutopia pieces, 5% of PDMX and 15% of Zynthion patterns (by hash). They provide the reference ranges `evaluation/score.py` uses.
+Files flagged `holdout` never feed the statistics in `stats/`: the Groove test split, about 12% of Mutopia pieces and 5% of PDMX (by hash). They provide the reference ranges `evaluation/score.py` uses.
 
 ## What may ship
 
 - `stats/` and the guidance pages: aggregate numbers from approved sources, plus general practice.
-- `local/`: Zynthion-derived numbers. **Not committed and not shipped** until Zynthion confirms that analysing its free packs for a skill is allowed. Where `tools/midi_check.py` uses a trap or drill target range, the range is a rounded convention that those numbers informed; replace or confirm those ranges before a public release.
+- Nothing from a source that is not cleared for building software. Every range in `tools/midi_check.py` comes from the approved sources above or from documented first principles (see `TARGETS.md`); genres without such a basis (trap, drill) have no target yet.
 - No source file, and nothing that can rebuild one.
 
 ## Mutopia pieces used (attribution)
@@ -45,8 +41,8 @@ Typeset editions by Mutopia Project volunteers. CC BY and CC BY-SA editions requ
 |---|---|---|---|---|---|
 | String Quartet No.12 | A. Dvořák (1841–1904) | Public Domain | Sébastien Manen | string quartet: folk-like melody, pentatonic colour, ostinato accompaniment | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2211 |
 | Symphony No. 9 in E minor | A. Dvořák (1841–1904) | Creative Commons Attribution-ShareAlike 3.0 | Keith OHara | orchestration: Romantic symphony, brass and woodwind solos | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1793 |
-| Estate / Summer | A. Vivaldi (1678–1741) | Creative Commons Attribution-ShareAlike 3.0 | smailliw (at) gmail.com | string writing: stillness vs storm, contrast of sections | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=336 |
-| L'Inverno / Winter | A. Vivaldi (1678–1741) | Creative Commons Attribution-ShareAlike 3.0 | smailliw (at) gmail.com | string writing: tremolo, pizzicato, programmatic texture | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=351 |
+| Estate / Summer | A. Vivaldi (1678–1741) | Creative Commons Attribution-ShareAlike 3.0 | smailliw (contact on the Mutopia piece page) | string writing: stillness vs storm, contrast of sections | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=336 |
+| L'Inverno / Winter | A. Vivaldi (1678–1741) | Creative Commons Attribution-ShareAlike 3.0 | smailliw (contact on the Mutopia piece page) | string writing: tremolo, pizzicato, programmatic texture | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=351 |
 | Première Arabesque | C. Debussy (1862–1918) | Public Domain | Keith OHara | impressionist arpeggio textures, triplets vs duplets | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1777 |
 | Suite Bergamasque: Clair de Lune | C. Debussy (1862–1918) | Public Domain | Keith OHara | impressionist harmony and rubato texture | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=1778 |
 | Keyboard Sonata in G Major | D. Scarlatti (1685–1757) | Creative Commons Attribution-ShareAlike 4.0 | Knute Snortum | keyboard figuration and repetition: Scarlatti sonata | https://www.mutopiaproject.org/cgibin/piece-info.cgi?id=2104 |

@@ -9,8 +9,7 @@ Approval policy (see tools/PROVENANCE.md in the Faderhand skill):
   mutopia  approved        Public Domain / CC BY / CC BY-SA per piece; held-out = ~12% of pieces by hash
   pdmx     approved only if no licence conflict, PDMX-deduplicated, and either classical/folk/sacred
            or marked original; everything else is excluded (possible arrangement of a copyrighted work)
-  zynthion pending         royalty-free music licence, no grant for software or redistribution:
-           analysed locally only, never shipped; held-out = ~15% of patterns by hash
+Only these cleared sources are inventoried. Material that is not cleared for building software is not read.
 """
 import argparse, csv, hashlib, json, os, sys
 from concurrent.futures import ProcessPoolExecutor
@@ -23,27 +22,6 @@ SAFE_PDMX_GENRES = {"classical", "folk", "religiousmusic"}
 
 def h(s, mod):
     return int(hashlib.sha1(s.encode()).hexdigest(), 16) % mod
-
-
-def zyn_meta(rel):
-    parts = rel.split("/")
-    pack = parts[2]
-    folder = parts[4] if len(parts) > 5 else ""
-    name = os.path.splitext(parts[-1])[0]
-    fl_split = "FL Studio - one file per drum" in rel
-    role = {"808-midi": "808+drums", "arp-midi": "arp", "bass-midi": "bass", "melody-midi": "melody",
-            "drum-midi-patterns": "drums", "drum-fills-midi": "drum-fill"}.get(pack)
-    if pack.endswith("-midi-pack"):
-        role = "drums" if folder == "Drums" else "chords-and-bass"
-    if pack == "808-midi":
-        role = "808" if name.endswith("- 808") else ("drums" if name.endswith("- Drums") else "hi-hat")
-    if folder.startswith("Hi-hats"):
-        role = "hi-hat"
-    if fl_split:
-        role += " (FL per-drum split)"
-    stem = name.rsplit(" - ", 1)[0] if pack == "808-midi" else name
-    genre = folder if pack not in ("deep-house-midi-pack",) and not pack.endswith("-midi-pack") else pack.replace("-midi-pack", "")
-    return {"pack": pack, "genre": genre, "role": role, "fl_split": fl_split, "pattern_key": f"{pack}/{stem}"}
 
 
 def collect(root):
@@ -84,18 +62,6 @@ def collect(root):
                      "meta": {"genres": sorted(genres), "is_original": original, "title": r["title"],
                               "composer": r["composer_name"], "rating": r["rating"], "n_tracks": r["n_tracks"],
                               "licence_url": r["license_url"]}})
-    # Zynthion
-    zroot = os.path.join(root, "zynthion", "extracted")
-    for dp, _, fs in os.walk(zroot):
-        for f in fs:
-            if not f.lower().endswith(".mid"):
-                continue
-            rel = os.path.relpath(os.path.join(dp, f), root)
-            m = zyn_meta(rel)
-            rows.append({"source": "zynthion", "rel": rel,
-                         "licence": "Zynthion royalty-free licence (no redistribution)",
-                         "status": "pending clearance: local analysis only",
-                         "holdout": h(m["pattern_key"], 100) < 15, "meta": m})
     return rows
 
 

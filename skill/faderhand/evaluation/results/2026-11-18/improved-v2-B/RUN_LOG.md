@@ -24,7 +24,7 @@ All paths are relative to `improved-v2-repo/`.
 - `skill/faderhand/modules/knowledge/LOW_END_808_AND_BASS.md`
 - `skill/faderhand/modules/knowledge/MELODY_LINES_AND_DEVELOPMENT.md`
 - `skill/faderhand/modules/knowledge/ARRANGEMENT_AND_REVISION.md`
-- `skill/faderhand/modules/knowledge/local/ZYNTHION_FINDINGS.md`: local-only numbers. They informed the trap design but are not quoted in any output.
+- a local findings file from a source pending licence clearance (`local/`, never shipped; removed from the skill on 2026-11-21): local-only numbers. They informed the trap design but are not quoted in any output.
 
 ### Tools
 - `skill/faderhand/tools/midi_check.py`: read, and run on every MIDI output and sketch.

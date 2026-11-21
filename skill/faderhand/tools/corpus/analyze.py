@@ -1,8 +1,8 @@
 """Per-file musical features for the corpus (measurements, not interpretations).
 
 Usage: uv run --no-project --with mido python -I analyze.py <corpus_root> [--sample-pdmx N] [--workers 2]
-Reads _inventory/inventory.jsonl, analyses approved and pending files (held-out files too, flagged), skips
-duplicates, unreadable files and Zynthion's FL per-drum splits, and writes _features/features.jsonl.
+Reads _inventory/inventory.jsonl, analyses approved files (held-out files too, flagged), skips duplicates,
+unreadable and excluded files, and writes _features/features.jsonl.
 
 Grid conventions: a "step" is a 16th note; positions are steps from the bar start; timing offsets are measured
 against the nearest 16th in milliseconds and as a fraction of a 16th. Velocities are MIDI 1-127.
@@ -450,10 +450,6 @@ def analyse(args):
     meta = row.get("meta", {})
     if row["source"] == "groove":
         hint_role = "drums"
-    elif row["source"] == "zynthion":
-        r = meta.get("role", "")
-        hint_role = {"drums": "drums", "drum-fill": "drums", "808+drums": None, "hi-hat": "drums",
-                     "808": "808", "bass": "bass", "melody": "melody", "arp": "arp"}.get(r)
     # group by (track, channel)
     groups = defaultdict(list)
     for n in s.notes:
@@ -491,17 +487,6 @@ def analyse(args):
         else:
             feats[role] = line_features(ns, g)
     rec["features"] = feats
-    # Zynthion's 808 files come with a matching "- Drums.mid": measure the 808 against that kick.
-    if row["source"] == "zynthion" and row["rel"].endswith(" - 808.mid"):
-        sib = os.path.join(root, row["rel"][: -len(" - 808.mid")] + " - Drums.mid")
-        if os.path.exists(sib):
-            try:
-                ds = midi_lib.read(sib)
-                if ds.ppq == s.ppq:
-                    parts["drums"] = ds.notes
-                    rec["paired_drums"] = os.path.basename(sib)
-            except Exception:  # noqa: BLE001
-                pass
     rec["interplay"] = interplay(parts, g)
     if row["source"] in ("mutopia", "pdmx") and pitched:
         rec["counterpoint"] = counterpoint(pitched, g)
@@ -520,8 +505,6 @@ def main():
     pdmx = []
     for r in rows:
         if not r.get("readable") or r.get("duplicate_of") or r.get("same_music_as") or r.get("transposition_of"):
-            continue
-        if r["source"] == "zynthion" and r["meta"].get("fl_split"):
             continue
         if r["status"].startswith("excluded"):
             continue

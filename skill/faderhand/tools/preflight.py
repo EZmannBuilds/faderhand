@@ -1,5 +1,5 @@
 """Acoustic preflight: what a plan has to know before it relies on silence or adds a gesture, and the check afterwards
-that the silence (or the entrance) really happened. Built after the Cold Brick A/B/C test, where every planned note
+that the silence (or the entrance) really happened. Built after the Song A A/B/C test, where every planned note
 change landed but the planned gaps still sounded (the stab samplers ignored note-off).
 
 usage:

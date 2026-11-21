@@ -1,15 +1,17 @@
 """Measure a MIDI file against what the corpus shows for its genre, and say what to revise.
 
 Usage:
-  uv run -q --no-project --with mido python tools/midi_check.py song.mid --genre trap [--json]
-  genres: trap, drill, boom-bap, hiphop-live, funk, soul, neo-soul, rnb, lofi, house, techno, afro,
-          rock, jazz, latin, classical, orchestral, pop, generic
+  uv run -q --no-project --with mido python tools/midi_check.py song.mid --genre boom-bap [--json]
+  genres: boom-bap, hiphop-live, funk, soul, neo-soul, rnb, lofi, house, techno, afro,
+          rock, jazz, latin, classical, orchestral, pop, generic; trap and drill report "no target yet"
 
 It reads the tracks, guesses each part's role (drums on channel 10; names such as "808", "bass", "keys",
 "lead" win over guesses), measures them with the corpus analyser, and compares the numbers with target
 ranges. The ranges come from TARGETS.md beside this file: Groove MIDI (human drumming, CC BY 4.0), Mutopia and
-PDMX (public domain / CC) and, for programmed electronic and trap patterns, aggregate statistics from
-packs whose numbers stay on this machine.
+PDMX (public domain / CC), and documented practice where a range is true by definition (a programmed part is
+quantized; house has a kick on every beat). Trap and drill have no target yet: no cleared source covers
+programmed trap or drill patterns, so `--genre trap` and `--genre drill` report the measurements and the generic
+checks only.
 
 A PASS means a number sits where the reference material sits. It does not mean the music is good, and a
 deliberate choice outside a range is fine when the brief asks for it: say so in the notes.
@@ -27,14 +29,8 @@ LIVE = {  # human-played drum feel (Groove MIDI, beats, 10th-90th percentile, ro
     "quantized_share": (0.0, 0.3), "drum_jitter_ms": (3, 12), "hat_vel_structure": (0.2, 0.8),
     "hat_vel_sd": (8, 27), "snare_vel_sd": (12, 45), "snare_behind_hats_ms": (2, 25),
 }
-PROGRAMMED = {"quantized_share": (0.6, 1.0), "drum_jitter_ms": (0, 6)}
+PROGRAMMED = {"quantized_share": (0.6, 1.0), "drum_jitter_ms": (0, 6)}  # by definition: a programmed part sits on the grid
 GENRES = {
-    "trap": {"tempo": (128, 160), "half_time": True, "hat_rolls_per_bar": (0.25, 1.5), "low_on_kick": (0.35, 1.0),
-             "kick_with_low": (0.8, 1.0), "low_per_bar": (2.5, 6.5), "low_glide_per_bar": (0.5, 3.0), "lead_range": (5, 16),
-             "lead_phrase_notes": (3, 12), **PROGRAMMED},
-    "drill": {"tempo": (136, 146), "half_time": True, "hat_rolls_per_bar": (0.25, 1.5), "roll_kind": "triplet",
-              "low_on_kick": (0.3, 1.0), "kick_with_low": (0.8, 1.0), "low_per_bar": (3.5, 6.5), "low_glide_per_bar": (1.0, 3.0),
-              "low_octave_jump": (0.25, 0.6), **PROGRAMMED},
     "boom-bap": {"tempo": (80, 98), "backbeat_2_4": (0.6, 1.0), "swing": (52, 62), "ghost_per_bar": (0.5, 4), **LIVE},
     "hiphop-live": {"tempo": (70, 100), "backbeat_2_4": (0.6, 1.0), "swing": (50, 61), "ghost_per_bar": (0.5, 5), **LIVE},
     "funk": {"tempo": (85, 120), "backbeat_2_4": (0.6, 1.0), "swing": (51, 74), "ghost_per_bar": (1.5, 7), **LIVE},
@@ -53,6 +49,11 @@ GENRES = {
     "classical": {"lead_step_ratio": (0.3, 0.65), "lead_leap_recovery": (0.3, 0.7), "contrary": (0.2, 0.55), "parallel_fifths": (0, 2.0)},
     "orchestral": {"lead_step_ratio": (0.3, 0.65), "contrary": (0.15, 0.55), "parallel_fifths": (0, 2.0)},
     "generic": {},
+}
+# Genres the checker accepts but has no cleared source for yet. They get the generic checks and a "no target yet" line.
+NO_TARGET_YET = {
+    "trap": "no cleared source covers programmed trap patterns (Groove is human drumming; PDMX excludes hip-hop)",
+    "drill": "no cleared source covers programmed drill patterns (Groove is human drumming; PDMX excludes hip-hop)",
 }
 GENERIC = {"bar_uniqueness_min": 0.3, "random_velocity_max_sd_without_structure": 10}
 
@@ -161,6 +162,9 @@ def measure(path):
 def verdicts(m, genre):
     t = GENRES.get(genre, {})
     out = []
+    if genre in NO_TARGET_YET:
+        out.append(("NO TARGET", f"{genre}: no target yet; {NO_TARGET_YET[genre]}",
+                    "only the generic checks below apply; judge the genre feel by listening and say so in the notes"))
 
     def rng(key, label, advice):
         if key not in t or m.get(key) is None:
@@ -182,9 +186,6 @@ def verdicts(m, genre):
     rng("swing", "16th swing %", "move the off-16ths later (swing) by the target amount; keep it consistent per instrument")
     rng("ghost_per_bar", "ghost snares per bar", "add quiet snare notes (25-55 velocity) mostly on the 'a' of 2 and 4 and the 'e' of 3")
     rng("hat_rolls_per_bar", "hat rolls per bar", "add 32nd or triplet hat rolls, mostly leading into beat 3 or the next bar, with rising velocity")
-    if t.get("roll_kind") == "triplet" and m.get("roll_kinds"):
-        ok = any("triplet" in k for k in m["roll_kinds"])
-        out.append(("PASS" if ok else "REVISE", f"roll subdivisions: {m['roll_kinds']}", None if ok else "drill rolls are mostly 16th or 32nd triplets"))
     if m.get("roll_velocity_shape") and "hat_rolls_per_bar" in t:
         shp = m["roll_velocity_shape"]
         ok = shp.get("rising", 0) >= sum(shp.values()) / 2
@@ -193,7 +194,7 @@ def verdicts(m, genre):
     rng("kick_with_low", "share of kicks with an 808/bass note", "give (nearly) every kick a low note")
     rng("low_per_bar", "808/bass notes per bar", "change the 808/bass density toward the target")
     rng("low_glide_per_bar", "808 slides per bar (overlapping notes or bends)", "overlap consecutive 808 notes (portamento/legato) for slides")
-    rng("low_octave_jump", "808 octave-jump share", "use octave jumps on the 808 more (drill) or less")
+    rng("low_octave_jump", "808 octave-jump share", "use octave jumps on the 808 more or less")
     rng("low_step_ratio", "bass stepwise share", "walk the bass: approach chord roots by step or chromatic neighbour")
     rng("low_offbeat", "bass off-16th share", "move bass notes to the offbeats")
     rng("chord_voices", "chord voices", "voice chords with 4+ notes (7ths, 9ths) in a mid register")
@@ -232,7 +233,7 @@ def verdicts(m, genre):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("midi")
-    ap.add_argument("--genre", default="generic", choices=sorted(GENRES))
+    ap.add_argument("--genre", default="generic", choices=sorted(set(GENRES) | set(NO_TARGET_YET)))
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     m = measure(a.midi)

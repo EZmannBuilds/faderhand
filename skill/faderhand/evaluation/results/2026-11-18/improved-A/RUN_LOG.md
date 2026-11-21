@@ -23,7 +23,7 @@ All under `skill/faderhand-music/modules/knowledge/`:
 - `GENERATION_RULES.md`, `README.md`, `TARGETS.md`
 - `DRUMS_AND_GROOVE.md`, `LOW_END_808_AND_BASS.md`
 - `MELODY_LINES_AND_DEVELOPMENT.md`, `ARRANGEMENT_AND_REVISION.md`
-- `local/ZYNTHION_FINDINGS.md`: local trap, 808, melody and arp numbers.
+- a local findings file from a source pending licence clearance (`local/`, never shipped; removed from the skill on 2026-11-21): local trap, 808, melody and arp numbers.
 
 **Vital, Faderhand and docs**
 - `skill/faderhand-music/modules/vital/README.md`: the calibrated raw-value table.
@@ -160,5 +160,5 @@ All under `skill/faderhand-music/modules/knowledge/`:
 - **No renders or listening.** No DAW or renderer was used, by the runner rules. Every sketch round was the protocol's reduced, **unrendered** round: judged on measurements and a bar-by-bar read, never on audio. Musical quality (sound, balance, whether a groove actually feels good) is unverified. The skill says only listening decides that.
 - **No user profile** existed (`modules/studio/profiles/local/` is empty). I couldn't check installed instruments (plugin audit), and the runner said to ask nothing. I added GM program numbers as stand-ins only.
 - **`modules/evaluation/score.py`** is listed in the entry SKILL.md, but it isn't in the skill folder, so I didn't run it.
-- **Local trap numbers:** the trap and 808 targets partly come from `local/ZYNTHION_FINDINGS.md`, which is marked local-only and pending licence clearance. I used them for this run's own MIDI only. No third-party MIDI was copied into any output.
+- **Local trap numbers:** the trap and 808 targets partly come from a local findings file from a source pending licence clearance (`local/`, never shipped; removed from the skill on 2026-11-21), which is marked local-only and pending licence clearance. I used them for this run's own MIDI only. No third-party MIDI was copied into any output.
 - **T07 volume:** the value assumes the default is the README's 0 dB point (5473). Vital's real default wasn't verified, because doing so would mean opening Vital.

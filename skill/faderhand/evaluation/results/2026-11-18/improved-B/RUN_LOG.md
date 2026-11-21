@@ -20,7 +20,7 @@ Paths are relative to `improved-repo/skill/faderhand-music/` unless marked other
 - `modules/knowledge/LOW_END_808_AND_BASS.md`
 - `modules/knowledge/MELODY_LINES_AND_DEVELOPMENT.md`
 - `modules/knowledge/ARRANGEMENT_AND_REVISION.md`
-- `modules/knowledge/local/ZYNTHION_FINDINGS.md` (local-only numbers; used for trap 808 and hat decisions, not quoted in any deliverable)
+- a local findings file from a source pending licence clearance (`local/`, never shipped; removed from the skill on 2026-11-21): local-only numbers, used for trap 808 and hat decisions and not quoted in any deliverable
 
 **Studio protocols and specialists**
 - `modules/studio/shared/SKETCH_ROUND_PROTOCOL.md`

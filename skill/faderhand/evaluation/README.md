@@ -29,7 +29,8 @@ only the skill changed between arms.
 ## What the checks can and can't show
 
 - **Reference ranges come from held-out files only:** the Groove test split for funk, soul and hip-hop feel.
-  The trap ranges are conventions, because too few held-out trap files survived dedup.
+  T03's trap checks use the fixed fallback conventions in `score.py`: no cleared source holds trap material, and
+  the 2026-11-18 `refs.json` has no trap values.
 - **The improved skill's `midi_check.py` uses the same analyser as `score.py`.** An improved run can therefore
   "aim at" what is scored. The ranges are real-world distributions, not arbitrary targets, but read objective
   gains together with the blind judge and, above all, listening.

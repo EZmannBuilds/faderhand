@@ -33,7 +33,7 @@ Paths are relative to `improved-v2-repo/`.
 - `skill/faderhand/modules/knowledge/LOW_END_808_AND_BASS.md`
 - `skill/faderhand/modules/knowledge/MELODY_LINES_AND_DEVELOPMENT.md`
 - `skill/faderhand/modules/knowledge/ARRANGEMENT_AND_REVISION.md`
-- `skill/faderhand/modules/knowledge/local/ZYNTHION_FINDINGS.md`: local-only trap and 808 numbers. I used
+- a local findings file from a source pending licence clearance (`local/`, never shipped; removed from the skill on 2026-11-21): local-only trap and 808 numbers. I used
   them to inform choices and did not quote them in any notes.
 
 **Tools (run and read)**

@@ -1,6 +1,6 @@
 ---
 name: faderhand
-version: 0.7.0-dev
+version: 0.7.0
 description: Drive Ableton Live 12 through the Faderhand MCP tools (tracks, mixer in dB, returns and sends, routing and buses, devices and parameters, racks, sidechain, automation, Arrangement clips, recording and rendering), measure MIDI against genre ranges and list what to revise (midi_check), validate and execute Music Production Blueprints, and set Vital patches with calibrated units. Use for any hands-on Live task or MIDI measurement. Composition and arrangement planning live in the separate AI Music Studio skill.
 ---
 
@@ -16,7 +16,7 @@ Resolve every path relative to this folder.
 | The task is about… | Open | Then |
 |---|---|---|
 | **Ableton Live:** mixer, returns, sends, buses, routing, devices, racks, sidechain, automation, Arrangement clips, recording, render | `daw/README.md` | Faderhand's tools (`tooling_info` first) |
-| **Measuring a MIDI file**: groove, swing, ghost notes, hat tiers, kick and 808 lock, melody shape, section changes | `tools/midi_check.py` (ranges and sources: `tools/TARGETS.md`, `tools/PROVENANCE.md`) | Report every REVISE line and say which are deliberate |
+| **Measuring a MIDI file**: groove, swing, ghost notes, hat tiers, kick and 808 lock, melody shape, section changes | `tools/midi_check.py` (ranges and sources: `tools/TARGETS.md`, `tools/PROVENANCE.md`) | Report every REVISE line and say which are deliberate. Trap and drill have no target yet: say so, and judge the genre feel by listening |
 | **A blueprint** to check or execute (a plan from the Studio skill, or one written here) | `blueprint/README.md` | Validate first: `blueprint/validate_blueprint.py` |
 | **Before an arrangement change, and after its render:** what keeps sounding after note-off, which fills and drops already exist, whether planned gaps are really silent | `tools/preflight.py` (`set`, `gestures`, `occupancy`) | Act on every FLAG, or say why it doesn't matter |
 | **Expressing an existing song as a blueprint** | `blueprint/blueprint_from_midi.py` | Validate it, then compare its measured relationships with the intent |

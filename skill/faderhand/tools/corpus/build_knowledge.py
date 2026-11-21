@@ -3,7 +3,6 @@
 Usage: python3 -I build_knowledge.py <corpus_root> <skill_knowledge_dir>
 Writes:
   <knowledge>/stats/*.json          from approved sources (Groove, Mutopia, PDMX): may ship
-  <knowledge>/local/*.json          from pending sources (Zynthion): local only, never shipped (gitignored).
   The knowledge directory is the AI Music Studio skill's shared/MIDI_KNOWLEDGE/ (since 2026-11-20).
   <corpus_root>/_evals/refs.json    p10..p90 ranges from HELD-OUT files only, for evaluation/score.py
 Only aggregate numbers (medians, ranges, counts, histograms) are written: no notes, no per-file patterns.
@@ -100,7 +99,6 @@ def main(root, kdir):
     train = [r for r in rows if not r["holdout"]]
     held = [r for r in rows if r["holdout"]]
     os.makedirs(os.path.join(kdir, "stats"), exist_ok=True)
-    os.makedirs(os.path.join(kdir, "local"), exist_ok=True)
 
     # ---------- Groove (CC BY 4.0): human drumming by style, beats and fills separately
     gro = defaultdict(list)
@@ -144,40 +142,6 @@ def main(root, kdir):
     json.dump({"source": "Mutopia Project selection (PD / CC BY / CC BY-SA, see PROVENANCE.md) and PDMX approved subset (PD mark / CC0)",
                "groups": classical}, open(os.path.join(kdir, "stats", "classical_lines_counterpoint.json"), "w"), indent=1)
 
-    # ---------- Zynthion (pending clearance): local only
-    Z = [r for r in train if r["source"] == "zynthion"]
-    zd = defaultdict(list)
-    for r in Z:
-        if "drums" in r["features"] and r["meta"]["role"] in ("drums", "hi-hat"):
-            key = r["meta"]["genre"].lower()
-            zd[("fills/" if r["meta"]["pack"] == "drum-fills-midi" else "") + key].append(r)
-    z_drums = {k: drums_block(v) for k, v in sorted(zd.items())}
-    z808 = [r for r in Z if "808" in r["features"]]
-    z_808 = line_block([r["features"]["808"] for r in z808]) if z808 else None
-    if z_808:
-        z_808["bass_on_kick"] = dist([r["interplay"].get("bass_on_kick") for r in z808])
-        z_808["kick_with_bass"] = dist([r["interplay"].get("kick_with_bass") for r in z808])
-        z_808["pitchbend_events"] = dist([r["pitchbends"] for r in z808])
-    zr = {}
-    for role, pack in (("bass", "bass-midi"), ("melody", "melody-midi"), ("arp", "arp-midi")):
-        g = defaultdict(list)
-        for r in Z:
-            if r["meta"]["pack"] == pack and role in r["features"]:
-                g[r["meta"]["genre"].lower()].append(r["features"][role])
-        zr[role] = {k: line_block(v, ("rate_16ths", "cycle_notes", "span") if role == "arp" else ()) for k, v in sorted(g.items())}
-    cb = [r for r in Z if r["meta"]["role"] == "chords-and-bass"]
-    zcb = defaultdict(list)
-    for r in cb:
-        zcb[r["meta"]["genre"]].append(r)
-    z_cb = {k: {"files": len(v), "chord_bottom_minus_bass": dist([r["interplay"].get("chord_bottom_minus_bass_median") for r in v]),
-                "bass": line_block([r["features"]["bass"] for r in v if "bass" in r["features"]]),
-                "chords_changes_per_bar": dist([r["features"].get("chords", {}).get("changes_per_bar") for r in v]),
-                "chord_voices": dist([r["features"].get("chords", {}).get("voices_median") for r in v]),
-                "voice_motion": dist([r["features"].get("chords", {}).get("voice_motion_median") for r in v])} for k, v in zcb.items()}
-    json.dump({"source": "Zynthion free MIDI packs (royalty-free music licence; PENDING clearance for skill use). LOCAL ONLY: do not commit, ship or quote outside this machine.",
-               "drums_by_genre": z_drums, "808_with_paired_drums": z_808, "lines_by_genre": zr, "genre_pack_bass_and_chords": z_cb},
-              open(os.path.join(kdir, "local", "zynthion_stats.json"), "w"), indent=1)
-
     # ---------- held-out reference ranges for scoring
     def rng(vals, lo=.1, hi=.9):
         v = [x for x in vals if x is not None]
@@ -192,15 +156,6 @@ def main(root, kdir):
                      "snare_ghost_per_bar": rng([x.get("snare_ghost_per_bar") for x in fd]),
                      "hat_position_structure": rng(gi("hat_closed", "vel_structure")),
                      "hat_vel_sd": rng(gi("hat_closed", "vel_sd")), "snare_vel_sd": rng(gi("snare", "vel_sd"))}}
-    trap_d = [r for r in held if r["source"] == "zynthion" and "drums" in r["features"] and r["meta"]["genre"].lower() in ("trap", "drill") and r["meta"]["pack"] != "drum-fills-midi"]
-    trap_b = [r for r in held if r["source"] == "zynthion" and "808" in r["features"]]
-    td = [r["features"]["drums"] for r in trap_d]
-    refs["trap"] = {"files": len(trap_d) + len(trap_b),
-                    "backbeat_3": rng([x.get("backbeat_3") for x in td], 0, 1),
-                    "hat_rolls_per_bar": rng([x.get("hat_rolls_per_bar") for x in td], 0, 1),
-                    "hat_position_structure": rng([x["instruments"].get("hat_closed", {}).get("vel_structure") for x in td], 0, 1),
-                    "bass_on_kick": rng([r["interplay"].get("bass_on_kick") for r in trap_b], 0, 1),
-                    "808_per_bar": rng([r["features"]["808"]["per_bar"] for r in trap_b], 0, 1)}
     # widen any degenerate (single-value) range a little so a reference isn't a point
     for g in refs.values():
         for k, v in list(g.items()):
@@ -208,7 +163,7 @@ def main(root, kdir):
                 g[k] = [round(v[0] * 0.8, 3), round(v[1] * 1.2 + 0.05, 3)]
     os.makedirs(os.path.join(root, "_evals"), exist_ok=True)
     json.dump(refs, open(os.path.join(root, "_evals", "refs.json"), "w"), indent=1)
-    print("groove styles", len(groove), "| classical groups", len(classical), "| zynthion drum groups", len(z_drums))
+    print("groove styles", len(groove), "| classical groups", len(classical))
     print(json.dumps(refs, indent=1))
 
 
