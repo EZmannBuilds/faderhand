@@ -4,6 +4,50 @@ Started 2026-11-18, branch `feat/universal-music-skill` in `this repository`. Do
 **done**. Items still open are marked **open**, and the ones waiting on the owner are marked **decision**.
 
 
+## 2026-11-21: Composition Learning Batch v1 rated (one listener, blind)
+
+The owner rated all 16 renders and picked one version in each pair. The full report stays local with the batch, as
+`Composition Learning Report v1.md`. These are candidate lessons from one listener.
+
+**The pairs:**
+- **The director won 4 of the 6 pairs where a difference was heard;** the baseline won 2.
+- **The other 2 pairs (funk and neo-soul) scored identically,** so those arrangement changes were too small to hear.
+
+**Mean scores (out of 5):**
+
+| | Overall | Arrangement | Ideas | Sounds | Groove |
+|---|---|---|---|---|---|
+| Director | 3.38 | 3.12 | 3.12 | 2.75 | 3.62 |
+| Baseline | 3.25 | 2.62 | 2.88 | 3.00 | 3.62 |
+
+**Best song:** the cinematic cue, 4 in every category on the version he picked.
+
+**What the ratings point to:**
+- **Subtraction wins over a busy baseline:**
+  - the running trap bell melody;
+  - the crowded rock chorus.
+- **Subtraction loses when it holds back the body:**
+  - the boom-bap cellos ("fuller");
+  - the R&B drum pocket.
+
+  This is the second time, after Cold Brick. The candidate rule is to hold back decoration, never the body.
+- **Repetition is the most common complaint.** Measured section loudness barely moves: 1.3–2.4 LU between the main
+  sections of most songs, and the industrial drives are quieter than its break. The best-liked song has the widest
+  contrast.
+- **Sounds are the weakest category and vary most (1–5):**
+  - the recorded orchestra and the industrial sound design score well;
+  - Live's stock bells, the e-piano set, and the R&B keys and guitars score poorly.
+- **Groove never scored below 3,** and the drums or bass were named best on 7 renders.
+- **A measured instrument fact,** now in `daw/README.md`: sustain and legato samples speak too slowly for fast
+  ostinatos at 150 BPM. Trombones take about 130 ms to reach 70% of peak, on notes of about 220 ms.
+
+**open:** the v2 proposals are in the report, waiting for the planning thread and the owner. They are:
+- a post-render contrast check;
+- a variation budget;
+- an in-context sound audition;
+- an articulation rule;
+- pair differences you can hear early, with randomised labels.
+
 ## 2026-11-20: Composition Learning Batch v1 built (8 songs, 16 renders)
 
 This is ChatGPT's next step after the Cold Brick test. The owner started it ("Start the pilot", then "Start all 8
@@ -25,7 +69,7 @@ blind copies, and a private Listening Room page whose database holds the ratings
 - "01 needs a more diverse set of piano notes. some high some low": the piano now moves through registers by section.
   The same register rule became a planning rule for the rest of the batch.
 
-Ratings are pending.
+Ratings are in: see the 2026-11-21 entry above.
 
 ## 2026-11-20: Arrangement Director v0 test on Cold Brick (A/B/C)
 

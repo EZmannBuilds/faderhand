@@ -83,6 +83,22 @@ hits dying away.
 - `tools/preflight.py` does both: `set` flags Trigger-mode samplers, long releases and tails on sends; `occupancy`
   lists beats that sound with no note sounding.
 
+## Match the articulation to the note length
+
+A sustain or legato sample can't play a fast part, even with the Sampler attack at zero. The recorded sound itself
+takes time to speak, and a long release blurs one note into the next. Measured at 150 BPM:
+- sustained trombones took about 130 ms to reach 70% of peak, on notes of about 220 ms;
+- legato cellos took about 70 ms on 8th-note ostinato notes of about 120 ms;
+- legato full strings have a 700 ms release on those same notes.
+
+A listener heard it as instruments that "don't play fast".
+
+For parts faster than about 8th notes at 140 BPM:
+- use a staccato, spiccato or pizzicato articulation;
+- or shorten the release and start sustained samples about 50–100 ms early.
+
+To check, measure the onset rise time on the rendered stem against the written note length.
+
 ## Where MIDI notes come from
 
 Faderhand creates Arrangement MIDI clips (`create_arrangement_midi_clip`) and edits clips. To place a MIDI file
