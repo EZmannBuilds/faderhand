@@ -27,7 +27,17 @@ its notes". The owner said "Start the audition". The tool is `tools/audition.py`
 - **b1s05:** the v1 e-piano puts 61% of its energy below 250 Hz, on top of the bass. A Wurlitzer measured the most
   audible and the least low-clashing.
 
-**open:** the owner's ratings, to see whether sound alone moves a song.
+**done: the owner's ratings** (one listener, blind).
+- **b1s02: sound wasn't the problem.** He skipped all four and picked none: "it's not so much the instrument, it's
+  mainly the melody". The fix is new melodic material, not another sound.
+- **b1s05: a sound swap helped, but not enough.** The HM Classical Grand was the only version rated and the best
+  of the four. Compared with v1, sounds went 2 → 4 and play-again went no → maybe. Overall stayed at 3 and groove
+  fell 4 → 3, with "the timing of the instruments" as the complaint.
+- **Lesson (a hypothesis, not yet tested):** the keys are written about 26 ms behind the grid and rolled over 20 ms.
+  The Grand takes 26 ms to speak, against the e-piano's 3 ms, so its off-beat chords land about 80 ms late, about
+  40% of a 16th at 76 BPM. A sound swap changes the feel when the attack differs. When a part is played behind the
+  beat, measure the onset rise of each candidate and offset its notes to allow for it.
+- **open:** retest b1s05 with the Grand and the keys' lateness reduced; write new melodic material for b1s02.
 
 ## 2026-11-21: Composition Learning Batch v1 rated (one listener, blind)
 
