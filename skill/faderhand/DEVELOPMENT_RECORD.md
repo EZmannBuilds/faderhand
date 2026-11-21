@@ -4,6 +4,31 @@ Started 2026-11-18, branch `feat/universal-music-skill` in `this repository`. Do
 **done**. Items still open are marked **open**, and the ones waiting on the owner are marked **decision**.
 
 
+## 2026-11-21: Sound-Role Audition v0 (b1s02 lead, b1s05 keys)
+
+ChatGPT's reply to the v1 report set the next milestone: "make the same song noticeably better without changing
+its notes". The owner said "Start the audition". The tool is `tools/audition.py`.
+
+**How it works:**
+- One part is rendered through 5–6 candidate sounds, each on its own track in a scratch copy of the rated Set.
+- Each candidate is measured alone and against the song's other stems:
+  - articulation against note length;
+  - tails after note-off;
+  - notes that make no sound;
+  - spectral colour;
+  - audible share in the mix and low-frequency clash.
+- The candidates that fail technically are dropped.
+- Three per song go into a blind, loudness-matched A–D test with the control, in a new Sound Audition Room page.
+  Everything except the one sound is held fixed.
+
+**What the measurements already show:**
+- **b1s02:** the v1 bells ring about 400 ms past each note, into the director's stops. A muted choir took 133 ms to
+  speak on 211 ms notes, so it was dropped.
+- **b1s05:** the v1 e-piano puts 61% of its energy below 250 Hz, on top of the bass. A Wurlitzer measured the most
+  audible and the least low-clashing.
+
+**open:** the owner's ratings, to see whether sound alone moves a song.
+
 ## 2026-11-21: Composition Learning Batch v1 rated (one listener, blind)
 
 The owner rated all 16 renders and picked one version in each pair. The full report stays local with the batch, as

@@ -35,6 +35,7 @@ Python 3.10+ is needed. `uv run -q --no-project --with mido …` provides `mido`
 | `blueprint/` | Music Production Blueprint v0: schema, validator, converter, example |
 | `tools/midi_check.py` | Measure a MIDI file against a genre's ranges and list revisions |
 | `tools/preflight.py` | Acoustic preflight: note-off and tail behaviour in a Set, existing fills and drops, sound against notes in a stem |
+| `tools/audition.py` | Sound-role audition: one part rendered through candidate sounds, measured alone and in the mix (articulation, tails, reach, colour, audible share) |
 | `tools/TARGETS.md`, `tools/PROVENANCE.md` | Where each range comes from; sources, licences and attribution |
 | `tools/corpus/` | Rebuild the corpus inventory, analysis and statistics (the knowledge pages live in the Studio skill) |
 | `evaluation/` | Ten-task benchmark, fixtures, objective scorer, blind A/B tooling, offline GM renderer, results |

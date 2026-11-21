@@ -42,6 +42,14 @@ the Studio skill exists, and still measure anything you write with `midi_check.p
    ignores note-off). After the render, run `preflight.py occupancy` on the stems inside each planned gap.
 5. **Keep musical intent through a revision.** Swapping a sound or a patch keeps the notes and roles unless the user
    asked for more.
+   **Audition a lead or harmony sound in its role before blaming the writing:**
+   - render the same part through 3–6 candidate sounds;
+   - run `audition.py measure` on each stem, with the song's other stems as context; it reports articulation against
+     note length, tails, notes that make no sound, colour, and how much of the part is audible in the mix;
+   - drop the candidates that fail technically, and let the listener choose among the rest, blind and
+     loudness-matched.
+
+   Don't rewrite notes to fix a sound that hasn't been tested.
 6. **Provenance:** third-party MIDI never goes into an output, a commit or this skill.
 
 ## Tools

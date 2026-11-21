@@ -98,6 +98,7 @@ For parts faster than about 8th notes at 140 BPM:
 - or shorten the release and start sustained samples about 50–100 ms early.
 
 To check, measure the onset rise time on the rendered stem against the written note length.
+`tools/audition.py measure` does this, along with the other audition measures.
 
 ## Where MIDI notes come from
 
