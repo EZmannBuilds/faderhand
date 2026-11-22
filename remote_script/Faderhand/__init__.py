@@ -31,7 +31,7 @@ from . import policy
 
 PORT = 9878
 HOST = "127.0.0.1"
-VERSION = "0.6.0"
+VERSION = "0.7.0"
 SCRATCH_MARKER = "__TOOLING_SCRATCH__"   # destructive commands run only in a set that has a track with this name
 LETTERS = "ABCDEFGHIJKL"
 MAIN_THREAD_TIMEOUT = 20.0

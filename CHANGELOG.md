@@ -1,6 +1,30 @@
 # Changelog
 
-## v0.6.0-alpha.1 (unreleased)
+## v0.7.0-alpha.1 (2026-11-21)
+
+Adds the Faderhand agent skill in `skill/faderhand/`. The MCP server and Remote Script are unchanged apart from the
+version: still 79 tools, same port, same safety guards. `tooling_info` now reports version `0.7.0`.
+
+- **`skill/faderhand/`: the Faderhand agent skill**, installed on its own. `SKILL.md` routes Live tasks, MIDI
+  measurement, blueprint execution and Vital units.
+  - Live recipes and safety rules (`daw/`) and calibrated Vital preset units (`vital/`).
+  - `tools/midi_check.py` measures a MIDI file against genre ranges and lists what to revise. The ranges come from
+    Groove MIDI, PDMX and Mutopia aggregates, or from documented first principles (`tools/TARGETS.md`,
+    `tools/PROVENANCE.md`). Trap and drill report "no target yet": no cleared source covers them.
+  - `tools/preflight.py` (checks that a planned silence or entrance really happens in the render) and
+    `tools/audition.py` (measures candidate sounds for one part: articulation, tail, reach, colour and, in the mix,
+    audible share).
+  - Corpus tools that rebuild the aggregate numbers from the cleared sources only (`tools/corpus/`).
+  - A ten-task benchmark with its scorer, blind A/B tooling and the 2026-11-18 results (`evaluation/`).
+- **Music Production Blueprint v0 and 0.2** (`skill/faderhand/blueprint/`): a JSON Schema, a validator with semantic
+  checks, a converter from an existing song's MIDI, and an example built on the benchmark's own fixture.
+- **Tests:** 17 new offline tests (12 blueprint, 3 preflight, 2 audition); the offline suite has 53. CI now installs
+  `mido` and `jsonschema`.
+- **Separate skills, bundled on the website.** The AI Music Studio and WavRead skills stay in their own repositories,
+  and the MIDI knowledge pages moved to the Studio. `docs/ARCHITECTURE-AND-DELIVERY-PLAN.md` has the split, the
+  bundle proposal, the regression plan and the next phases.
+
+## v0.6.0-alpha.1 (2026-11-14)
 
 - **Renamed to Faderhand, for Ableton Live 12.** The control script folder and class are now `Faderhand`
   (status bar: "Faderhand: listening on port 9878"), `tooling_info` reports name `Faderhand` and version `0.6.0`,

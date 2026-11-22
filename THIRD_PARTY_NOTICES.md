@@ -19,3 +19,15 @@ Ableton, Live and Push are trademarks of Ableton AG. Faderhand is an independent
 affiliated, associated, authorized, endorsed by, or in any way officially connected with Ableton AG.
 The Remote Script uses Live's `_Framework` and Live Object Model, which ship with Live and are not included here.
 Plugin names mentioned in docs and tests (Vital, MeldaProduction, Serum, Arturia and others) belong to their owners.
+
+## Faderhand skill (`skill/faderhand/`)
+
+The checker's ranges and the evaluation references are aggregate statistics computed from the sources below. No MIDI
+from any of them is included.
+- Groove MIDI Dataset (Google LLC, CC BY 4.0; Gillick et al., ICML 2019).
+- PDMX (Long et al., CC BY 4.0; each score public domain or CC0).
+- Mutopia Project editions (public domain, CC BY or CC BY-SA, credited per piece in
+  `skill/faderhand/tools/PROVENANCE.md`).
+
+The AI Music Studio (PolyForm Noncommercial 1.0.0) and WavRead (MIT) skills are separate projects and are not included
+here.

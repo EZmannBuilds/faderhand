@@ -1,0 +1,184 @@
+{
+ "schema_version": "0.1",
+ "song": {
+  "title": "Evaluation fixture: comprehension",
+  "style": "swung hip-hop loop (test material)",
+  "tempo_bpm": 92.0,
+  "meter": "4/4",
+  "key": "D minor",
+  "length_bars": 17,
+  "mode": "instrumental"
+ },
+ "creative_direction": {
+  "focal_element": "lead_hook",
+  "contrast": "8th hats and no lead in the verse; 16th swung hats and a lead in the hook",
+  "brief": "16 bars written for the benchmark: a verse texture, then a fuller hook where the lead enters and the hats double."
+ },
+ "roles": [
+  {
+   "id": "kick",
+   "function": "rhythm",
+   "why": "the downbeat anchor the bass locks to"
+  },
+  {
+   "id": "snare",
+   "function": "rhythm",
+   "why": "the backbeat"
+  },
+  {
+   "id": "hats",
+   "function": "rhythm",
+   "why": "time feel; doubling to swung 16ths is the hook's lift"
+  },
+  {
+   "id": "bass",
+   "function": "low_end",
+   "why": "roots with the kick, plus a pickup into each chord",
+   "register": [
+    33,
+    39
+   ]
+  },
+  {
+   "id": "keys",
+   "function": "harmony",
+   "why": "the four-chord cycle held under everything",
+   "register": [
+    45,
+    60
+   ]
+  },
+  {
+   "id": "lead_hook",
+   "function": "hook",
+   "why": "a short cell that marks the hook",
+   "register": [
+    67,
+    74
+   ]
+  }
+ ],
+ "tracks": [
+  {
+   "name": "Drums",
+   "roles": [
+    "kick",
+    "snare",
+    "hats"
+   ],
+   "midi_track": "Drums",
+   "instrument": {
+    "name": "any GM drum kit",
+    "kind": "drum_rack"
+   }
+  },
+  {
+   "name": "Bass",
+   "roles": [
+    "bass"
+   ],
+   "midi_track": "Bass",
+   "instrument": {
+    "name": "any bass",
+    "kind": "sampler"
+   }
+  },
+  {
+   "name": "Keys",
+   "roles": [
+    "keys"
+   ],
+   "midi_track": "Keys",
+   "instrument": {
+    "name": "any electric piano",
+    "kind": "sampler"
+   }
+  },
+  {
+   "name": "Lead",
+   "roles": [
+    "lead_hook"
+   ],
+   "midi_track": "Lead",
+   "instrument": {
+    "name": "any lead",
+    "kind": "synth"
+   }
+  }
+ ],
+ "sections": [
+  {
+   "id": "verse",
+   "name": "Verse",
+   "start_bar": 1,
+   "length_bars": 8,
+   "active_roles": [
+    "kick",
+    "snare",
+    "hats",
+    "bass",
+    "keys"
+   ],
+   "energy": 0.73
+  },
+  {
+   "id": "hook",
+   "name": "Hook",
+   "start_bar": 9,
+   "length_bars": 9,
+   "active_roles": [
+    "kick",
+    "snare",
+    "hats",
+    "bass",
+    "keys",
+    "lead_hook"
+   ],
+   "energy": 1.0,
+   "changes": [
+    "adds lead_hook",
+    "energy up 0.27"
+   ]
+  }
+ ],
+ "relationships": [
+  {
+   "roles": [
+    "bass",
+    "kick"
+   ],
+   "rule": "coordinate_onsets",
+   "measured": {
+    "metric": "share of bass onsets within 1/32 of kick",
+    "value": 0.75
+   }
+  },
+  {
+   "roles": [
+    "lead_hook",
+    "keys"
+   ],
+   "rule": "register_separation",
+   "measured": {
+    "metric": "median pitch lead_hook minus keys (semitones)",
+    "value": 17.5
+   }
+  }
+ ],
+ "techniques": [],
+ "execution": {
+  "daw": "ableton_live",
+  "midi_file": "comprehension.mid",
+  "needs": [
+   "arrangement_midi_clips",
+   "browser_load",
+   "midi_check"
+  ]
+ },
+ "provenance": {
+  "created_by": "blueprint_from_midi.py",
+  "source": "comprehension.mid",
+  "version": "v0 example",
+  "notes": "Sections, activity, energy, changes, gestures and relationship values are measured from the MIDI; roles, tracks and intent come from the mapping file."
+ }
+}

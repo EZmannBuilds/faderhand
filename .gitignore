@@ -8,3 +8,8 @@ tests/results/
 *.alc
 .DS_Store
 .pytest_cache/
+
+# Faderhand skill: local-only files never leave the machine
+skill/faderhand/**/*.local.yaml
+skill/faderhand/**/*.local.json
+__pycache__/

@@ -1,0 +1,22 @@
+{
+ "T03": {
+  "A": "baseline-B",
+  "B": "improved-B"
+ },
+ "T04": {
+  "A": "baseline-B",
+  "B": "improved-B"
+ },
+ "T05": {
+  "A": "baseline-B",
+  "B": "improved-B"
+ },
+ "T06": {
+  "A": "improved-B",
+  "B": "baseline-B"
+ },
+ "T10": {
+  "A": "improved-B",
+  "B": "baseline-B"
+ }
+}
