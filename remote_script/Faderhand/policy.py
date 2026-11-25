@@ -33,7 +33,7 @@ CLASSES = {
     "get_track_devices": READ, "get_device_parameters": READ, "snapshot_device": READ, "get_routing": READ,
     "get_routing_graph": READ, "get_meters": READ, "verify_load": READ, "probe": READ,
     "list_automatable_parameters": READ, "get_automation": READ, "validate_automation": READ, "param_state": READ,
-    "inspect_device_sidechain": READ, "get_clip": READ, "list_arrangement_clips": READ,
+    "inspect_device_sidechain": READ, "get_clip": READ, "find_parameter": READ, "record_tracks_audio_status": READ, "list_arrangement_clips": READ,
     "record_arrangement_status": READ, "record_track_audio_status": READ, "capture_start": READ,
     "capture_result": READ, "show_clip": READ, "show_devices": READ, "show_view": READ,   # view only: what's on screen
     # transport: playback control that doesn't edit the Set (fire_clip is checked separately: launching an empty slot
@@ -51,10 +51,10 @@ CLASSES = {
     "set_chain_mixer": WRITE, "set_rack_macros": WRITE, "set_clip": WRITE, "warp_marker": WRITE,
     "create_audio_clip": WRITE, "duplicate_to_arrangement": WRITE, "delete_arrangement_clip": WRITE,
     "copy_arrangement_clip": WRITE, "move_arrangement_clip": WRITE, "trim_arrangement_clip": WRITE,
-    "split_arrangement_clip": WRITE, "create_arrangement_midi_clip": WRITE, "record_track_audio": WRITE,
+    "split_arrangement_clip": WRITE, "create_arrangement_midi_clip": WRITE, "record_track_audio": WRITE, "record_tracks_audio": WRITE, "set_parameter_by_name": WRITE, "cut_arrangement_range": WRITE,
     "set_arm": WRITE, "set_song_time": WRITE,
 }
-DELETES = {"delete_track", "delete_device", "delete_arrangement_clip"}
+DELETES = {"delete_track", "delete_device", "delete_arrangement_clip", "cut_arrangement_range"}
 
 
 class PolicyError(Exception):

@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**79 tools.**
+**83 tools.**
 
 ## Connection and inspection
 
@@ -77,6 +77,8 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `delete_device` | track, device | Delete a device. |
 | `snapshot_device` | track, device, save_to? | Every parameter's raw value and display string; save_to writes the snapshot as JSON to that path. |
 | `restore_device_snapshot` | track, device, snapshot_path | Write a saved snapshot back (by index, only where names still match) and report what still differs. |
+| `find_parameter` | track, name | Find every parameter called `name` on any device of a track, racks and nested racks included. |
+| `set_parameter_by_name` | track, name, value, units?, prefer?, device_name? | Set the parameter called `name` wherever it is on the track (racks included). |
 
 ## Racks
 
@@ -123,6 +125,7 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `fire_clip` | track, slot? | Launch a session clip slot. |
 | `duplicate_to_arrangement` | track, slot, at | Copy a session clip into the Arrangement. |
 | `record_track_audio` | dst, source, slot?, bars?, channel?, wait? | Record (resample) a track's output, or "Resampling" for the Main, into a session slot of an audio track for exactly `bars` bars. |
+| `record_tracks_audio` | takes, bars?, wait? | Record several tracks' outputs in ONE real-time pass: takes = [{"dst": audio track, "source": track or "Resampling", "slot": n, "channel": optional}], one take per destination. |
 
 ## Arrangement editing
 
@@ -134,6 +137,7 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `trim_arrangement_clip` | track, at?, index?, start?, end? | Trim an Arrangement clip to [start, end) in song time, content kept in place (clip unlooped). |
 | `split_arrangement_clip` | track, split_at, at?, index? | Split an Arrangement clip at a song position into two clips that play exactly as before (null -215 dB). |
 | `create_arrangement_midi_clip` | track, at, length, notes?, name? | A MIDI clip directly in the Arrangement; notes [[pitch, start, length, velocity]] in clip beats. |
+| `cut_arrangement_range` | tracks, start, end | Empty [start, end) of the Arrangement on one track or a list of tracks: clips crossing an edge are split there (playing as before), clips inside are deleted, nothing moves. |
 
 ## Transport, time and metering
 

@@ -756,6 +756,55 @@ def record_track_audio(dst: Ref, source: Ref, slot: int = 0, bars: int = 2, chan
 
 @mcp.tool()
 @guarded
+def record_tracks_audio(takes: list, bars: int = 2, wait: bool = True) -> str:
+    """Record several tracks' outputs in ONE real-time pass: takes = [{"dst": audio track, "source": track or
+    "Resampling", "slot": n, "channel": optional}], one take per destination. All start together on Live's launch
+    quantization and stop after exactly `bars` bars (per-part stems in one pass instead of one pass per part). Set
+    the playhead first and DON'T press play. Each take reports its file, and a warning if it landed in a Temp Project."""
+    r = call("record_tracks_audio", takes=takes, bars=bars)
+    if not wait:
+        return out(r)
+    st = None
+    deadline = time.time() + 3600
+    while time.time() < deadline:
+        time.sleep(1.0)
+        st = call("record_tracks_audio_status")
+        if st.get("done"):
+            break
+    call("transport", action="stop")
+    return out(st)
+
+
+@mcp.tool()
+@guarded
+def find_parameter(track: Ref, name: str) -> str:
+    """Find every parameter called `name` on any device of a track, racks and nested racks included. Each match
+    gives its address (device, chain, chain_device: what set_device_parameter takes), device name and kind
+    (instrument / audio_effect / midi_effect), raw value, min, max and display."""
+    return out(call("find_parameter", track=track, name=name))
+
+
+@mcp.tool()
+@guarded
+def set_parameter_by_name(track: Ref, name: str, value, units: str = "auto", prefer: Optional[str] = None,
+                          device_name: Optional[str] = None) -> str:
+    """Set the parameter called `name` wherever it is on the track (racks included). If several devices have it,
+    narrow with prefer="instrument" (or "audio_effect", "midi_effect") and/or device_name; still ambiguous means
+    nothing is written and every match is listed."""
+    return out(call("set_parameter_by_name", track=track, name=name, value=value, units=units, prefer=prefer,
+                    device_name=device_name))
+
+
+@mcp.tool()
+@guarded
+def cut_arrangement_range(tracks, start, end) -> str:
+    """Empty [start, end) of the Arrangement on one track or a list of tracks: clips crossing an edge are split
+    there (playing as before), clips inside are deleted, nothing moves. Disposable Sets only."""
+    return out(call("cut_arrangement_range", tracks=tracks, start=start, end=end))
+
+
+@mcp.tool()
+@guarded
 def set_arm(track: Ref, arm: bool) -> str:
     """Arm or disarm a track; reports explicit and implicit (controller) arm."""
     return out(call("set_arm", track=track, arm=arm))
