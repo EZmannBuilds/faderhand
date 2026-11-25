@@ -1,5 +1,19 @@
 # Changelog
 
+## Unreleased
+
+- **Knowledge pack** (`skill/faderhand/knowledge/`): seven lessons, as `LESSONS.md` and `lessons.json` (schema
+  `faderhand.knowledge/1`). Two are sourced drill conventions; five are measured findings, offline and in Live:
+  - Live's "808 Pure" rings on after note-off, so shorter notes make no low-end space;
+  - gating and ducking the 808 solve different problems;
+  - how deep to duck the 808 under the kick;
+  - thinning hats makes space but costs top end;
+  - printed stems give an exact wetness ground truth.
+
+  The lessons come from a private training lab that is not part of Faderhand: only cleared lessons ship. No
+  preferences, project decisions, song material, generator output or non-commercial model output. `SKILL.md` routes
+  to the pack. New offline test: `tests/offline/test_knowledge_pack.py`.
+
 ## v0.7.0-alpha.1 (2026-11-21)
 
 Adds the Faderhand agent skill in `skill/faderhand/`. The MCP server and Remote Script are unchanged apart from the

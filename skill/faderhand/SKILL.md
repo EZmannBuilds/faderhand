@@ -19,6 +19,7 @@ Resolve every path relative to this folder.
 | **Measuring a MIDI file**: groove, swing, ghost notes, hat tiers, kick and 808 lock, melody shape, section changes | `tools/midi_check.py` (ranges and sources: `tools/TARGETS.md`, `tools/PROVENANCE.md`) | Report every REVISE line and say which are deliberate. Trap and drill have no target yet: say so, and judge the genre feel by listening |
 | **A blueprint** to check or execute (a plan from the Studio skill, or one written here) | `blueprint/README.md` | Validate first: `blueprint/validate_blueprint.py` |
 | **Before an arrangement change, and after its render:** what keeps sounding after note-off, which fills and drops already exist, whether planned gaps are really silent | `tools/preflight.py` (`set`, `gestures`, `occupancy`) | Act on every FLAG, or say why it doesn't matter |
+| **What has already been learned:** measured findings and sourced conventions for a genre and stage (808 and kick, hats and space, wetness) | `knowledge/LESSONS.md` (data: `knowledge/lessons.json`) | Say which lesson you apply and measure it as the lesson says. Lessons are not rules, and they don't outrank what the user hears |
 | **Expressing an existing song as a blueprint** | `blueprint/blueprint_from_midi.py` | Validate it, then compare its measured relationships with the intent |
 | **Vital:** preset values, patches | `vital/README.md` | Use the calibrated units, not guesses |
 | Testing a skill change | `evaluation/README.md` | Same tasks, same model; score and compare blind |
