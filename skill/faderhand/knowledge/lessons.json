@@ -1,6 +1,6 @@
 {
  "schema": "faderhand.knowledge/1",
- "generated": "2026-11-25",
+ "generated": "2026-11-27",
  "count": 7,
  "about": "Lessons from a private training lab, cleared for shipping: measured findings and sourced conventions. Not rules, and not listening results unless a lesson says so.",
  "lessons": [
@@ -30,9 +30,9 @@
     "drill"
    ],
    "stage": "sketch",
-   "interpretation": "About 138-145 BPM felt half time. Snare or clap on beat 3, often moving over two bars (beat 3 of bar 1, beat 4 of bar 2) with ghost snares at phrase ends. Hats grouped (3+3+2) with stepped velocities and deliberate holes, straight 16ths mixed with triplet bursts, varied over a 4-bar phrase.",
-   "technique": "Program the snare over two bars, group the hats with holes, vary the pattern every 4 bars.",
-   "limitations": "Secondary sources and producer statements; conventions vary by scene and era; not a target to enforce.",
+   "interpretation": "About 138-145 BPM felt half time. Snare or clap on beat 3; often, but not in every track, it moves over two bars (beat 3 of bar 1, beat 4 of bar 2), with ghost snares at phrase ends. Hats grouped (3+3+2) with stepped velocities and deliberate holes, straight 16ths mixed with triplet bursts, varied over a 4-bar phrase.",
+   "technique": "Start with the snare on beat 3 of every bar, then try the two-bar move (beat 4 in every second bar) against it and keep whichever the song wants. Group the hats with holes, vary the pattern every 4 bars.",
+   "limitations": "Secondary sources and producer statements; conventions vary by scene and era; not a target to enforce. The two-bar snare is a variation to audition, not a requirement.",
    "sources": "Native Instruments blog 'drill'; Attack Magazine 'Beat dissected: UK drill'; Tracklib (808Melo, Dior); Amped Studio; DJ Mag 'Evolving sound of UK drill'",
    "basis": "Published sources. Conventions, not rules."
   },

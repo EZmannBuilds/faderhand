@@ -1,6 +1,6 @@
 # Faderhand knowledge pack
 
-Generated 2026-11-25 from a private training lab. 7 lessons.
+Generated 2026-11-27 from a private training lab. 7 lessons.
 
 Each lesson is either a **measured finding** (from controlled experiments where the cause of every change was known) or a **sourced convention** (from published producer interviews and guides). None is a rule. None outranks what the person you are working with hears. A confidence is a judgement, not a probability. Unless a lesson says otherwise, nobody has listened to the result yet.
 
@@ -26,11 +26,11 @@ How to use it: before planning or revising, read the lessons for the brief's gen
 
 *Sourced convention; confidence 0.60; genres: drill. Id L-4e195b84f2.*
 
-**What was found.** About 138-145 BPM felt half time. Snare or clap on beat 3, often moving over two bars (beat 3 of bar 1, beat 4 of bar 2) with ghost snares at phrase ends. Hats grouped (3+3+2) with stepped velocities and deliberate holes, straight 16ths mixed with triplet bursts, varied over a 4-bar phrase.
+**What was found.** About 138-145 BPM felt half time. Snare or clap on beat 3; often, but not in every track, it moves over two bars (beat 3 of bar 1, beat 4 of bar 2), with ghost snares at phrase ends. Hats grouped (3+3+2) with stepped velocities and deliberate holes, straight 16ths mixed with triplet bursts, varied over a 4-bar phrase.
 
-**Technique.** Program the snare over two bars, group the hats with holes, vary the pattern every 4 bars.
+**Technique.** Start with the snare on beat 3 of every bar, then try the two-bar move (beat 4 in every second bar) against it and keep whichever the song wants. Group the hats with holes, vary the pattern every 4 bars.
 
-**Limits.** Secondary sources and producer statements; conventions vary by scene and era; not a target to enforce.
+**Limits.** Secondary sources and producer statements; conventions vary by scene and era; not a target to enforce. The two-bar snare is a variation to audition, not a requirement.
 
 **Sources.** Native Instruments blog 'drill'; Attack Magazine 'Beat dissected: UK drill'; Tracklib (808Melo, Dior); Amped Studio; DJ Mag 'Evolving sound of UK drill'
 
