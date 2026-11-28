@@ -5,7 +5,8 @@ tests/offline/test_note_expression.py). Proves, in a Session clip and an Arrange
   3. a ramp, a clamp, chance, velocity range, release velocity and mute are written and read back;
   4. a dry run writes nothing; nothing ever moves (pitch, start and length are unchanged);
   5. a request that matches no note fails and writes nothing.
-It doesn't prove the sound: an audible accent needs a render (record_track_audio) and a listen.
+It doesn't prove the sound. That was checked once by a render (2026-11-27, docs/CAPABILITY-MATRIX.md): resample the
+part through a velocity-sensitive instrument and measure each 16th's peak.
 usage: python3 tests/test_note_expression.py   (scratch set; results tests/results/note-expression.json)
 """
 import os, sys

@@ -29,7 +29,8 @@
     base (a value, a pattern cycled per onset, or a ramp), then scale, offset and a seeded humanize, kept in 1-127.
     Every changed note is read back; `dry_run` shows the plan without writing.
   - Offline: `tests/offline/test_note_expression.py` (a fake clip with Live's note API). In Live:
-    `tests/test_note_expression.py`, written but not yet run.
+    `tests/test_note_expression.py`, 18/18 on Live 12.4.16. Rendered through Operator, a 3+3+2 hat pattern moved
+    each 16th's peak with its velocity (-14.6 dBFS at 110 to -22.4 at 70; flat velocity gave one level).
   - The README's group counts are corrected for the commands above.
 
 ## v0.7.0-alpha.1 (2026-11-21)
