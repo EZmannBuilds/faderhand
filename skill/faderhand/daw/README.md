@@ -105,6 +105,32 @@ To check, measure the onset rise time on the rendered stem against the written n
 Faderhand creates Arrangement MIDI clips (`create_arrangement_midi_clip`) and edits clips. To place a MIDI file
 the skill wrote:
 1. Use the companion AbletonMCP (`add_notes_to_clip`) if it is installed, or ask the user to drag the `.mid` in.
-2. Then read the notes back (`get_clip`) and compare them with the file.
+2. Then read the notes back (`get_clip_notes`) and compare them with the file.
 
 Never claim notes are in the Set without reading them back.
+
+## Shape velocity and expression on notes already in a clip
+
+`set_note_expression` changes velocity, chance (`probability`), velocity range (`velocity_deviation`), release
+velocity and mute on existing notes. It never adds, removes or moves a note. Select notes with `pitch`,
+`pitch_range`, `start`/`end`, a grid (`every`, `offset`, in beats) or `ids` from `get_clip_notes`.
+
+**Grouped hat accents (3+3+2), then check where they landed**
+```
+set_note_expression(track="Drums", slot=0, pitch=42, velocity_pattern=[110, 70, 70, 110, 70, 70, 105, 75], dry_run=True)
+set_note_expression(track="Drums", slot=0, pitch=42, velocity_pattern=[110, 70, 70, 110, 70, 70, 105, 75])
+get_clip_notes(track="Drums", slot=0, pitch=42)      # summary.velocity_by_16th: the mean velocity at each 16th
+```
+
+**A crescendo into the drop, then a little life on the off-beat hats**
+```
+set_note_expression(track="Snare", arrangement_index=0, start="15.1.1", end="17.1.1", velocity_ramp=[50, 120])
+set_note_expression(track="Drums", slot=0, pitch=42, every=0.5, offset=0.25, humanize=6, seed=1, probability=0.85)
+```
+
+- A velocity change is one base (`velocity`, `velocity_pattern` or `velocity_ramp`), then `velocity_scale`, then
+  `velocity_add`, then `humanize`. The result is kept in 1-127, and the reply counts the notes that had to be kept.
+- `humanize` with the same `seed` gives the same result, so a revision can be repeated exactly.
+- `dry_run=True` shows every note's before and after without writing. Use it before a broad selection.
+- Velocity changes the sound only if the instrument responds to it. Check its velocity sensitivity
+  (`get_device_parameters`), then render and listen. A changed number is not a heard accent.
