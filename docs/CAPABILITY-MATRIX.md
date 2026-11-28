@@ -52,7 +52,7 @@ automation), OFF (offline file processing).
 
 | Operation | Status | Route | Evidence / limit |
 |---|---|---|---|
-| record a track's output or the Main (Resampling) for exact bars | Working | LOM | `record_track_audio`: `fire(record_length)` works on 12.4.16; 8 beats exact |
+| record a track's output or the Main (Resampling) for exact bars | Working | LOM | `record_track_audio`: `fire(record_length)` works on 12.4.16; 8 beats exact. A slot past the last scene adds empty scenes (up to 16); a take written to a Temp Project is flagged |
 | audio clip from file (Session slot or Arrangement) | Working | LOM | `create_audio_clip` |
 | pitch coarse/fine, gain, warp on/off, warp mode, markers, loop | Working | LOM | survive reopen; the start marker is written while looping (Live ignores it otherwise) |
 | warp markers add/move/remove | Working | LOM | — |
@@ -87,7 +87,7 @@ automation), OFF (offline file processing).
 | Operation | Status | Route | Evidence / limit |
 |---|---|---|---|
 | Session → Arrangement copy at a bar | Working | LOM | envelopes dropped on instrument tracks |
-| delete an Arrangement clip | Working | LOM | scratch-guarded |
+| delete an Arrangement clip | Working | LOM | `delete_arrangement_clip`, by start position (`at`) or index; scratch-guarded |
 | create a MIDI clip in the Arrangement | Working | LOM | `create_arrangement_midi_clip` (Track.create_midi_clip) |
 | move, copy, trim, split Arrangement clips | Working | LOM | `tests/test_arrangement_edit.py` proves each by null test on deterministic audio: split −215.6 dB, move −45.5 dB, head trim −39 dB (Live's automatic clip-edge fade). There's no move or resize API: a move is a verified copy plus delete through a temporary spot; an unlooped clip's span is its loop_start/loop_end |
 | clip fades | Unsupported | OFF / UI | not in the LOM (Live adds a short automatic edge fade); render fades offline, or draw them in the UI |

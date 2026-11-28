@@ -739,7 +739,8 @@ def record_track_audio(dst: Ref, source: Ref, slot: int = 0, bars: int = 2, chan
     """Record (resample) a track's output, or "Resampling" for the Main, into a session slot of an audio track for
     exactly `bars` bars. Set the playhead first (set_song_time(position=...)) and DON'T press play: the launch
     starts the transport (a play call restarts it and cuts the recording). This is also the dialog-free render:
-    record the Main, then run tools/audio_check.py on the file."""
+    record the Main, then run tools/audio_check.py on the file. A slot just past the last scene adds empty scenes
+    (up to 16); an occupied slot is refused."""
     r = call("record_track_audio", dst=dst, source=source, slot=slot, bars=bars, channel=channel)
     if not wait:
         return out(r)
@@ -847,6 +848,14 @@ def trim_arrangement_clip(track: Ref, at=None, index: Optional[int] = None, star
     """Trim an Arrangement clip to [start, end) in song time, content kept in place (clip unlooped). Live adds its
     short clip-edge fade at a new edge."""
     return out(call("trim_arrangement_clip", track=track, at=at, index=index, start=start, end=end))
+
+
+@mcp.tool()
+@guarded
+def delete_arrangement_clip(track: Ref, at=None, index: Optional[int] = None) -> str:
+    """Delete one Arrangement clip, found by its start `at` (song position, e.g. "9.1.1" or beats) or `index`.
+    Runs only in a disposable Set (a track named __TOOLING_SCRATCH__)."""
+    return out(call("delete_arrangement_clip", track=track, at=at, index=index))
 
 
 @mcp.tool()

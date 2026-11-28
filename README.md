@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 85 tools.
+then call its 86 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-85 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+86 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
@@ -126,7 +126,7 @@ conventions: [docs/TOOLS.md](docs/TOOLS.md).
 | Automation | 11 | `set_automation_points`, `get_automation`, `record_arrangement_automation` |
 | Clips, audio and recording | 9 | `make_test_clip`, `create_audio_clip`, `record_tracks_audio` |
 | MIDI notes | 2 | `get_clip_notes`, `set_note_expression` |
-| Arrangement editing | 7 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
+| Arrangement editing | 8 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
 | Transport, time and metering | 4 | `transport`, `set_song_time`, `measure_levels` |
 
 ## Examples
