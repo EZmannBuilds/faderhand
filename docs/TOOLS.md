@@ -99,6 +99,18 @@ In 0.1.1 the path can go deeper: `chain="1/0/2"` is chain 1, its device 0 (a nes
 `set_device_parameters(values={name: value})` (every name is checked before any write), `set_device_on` (bypass),
 `move_device`, `delete_device` (scratch sets only), `snapshot_device(save_to?)`, `restore_device_snapshot(snapshot_path)`.
 
+## Export (offline render, no full-screen control; measured 2026-11-12)
+
+- `export_audio(start, length, path, options=None)`: renders the Main from `start` ("9.1.1") for `length` ("8.0.0")
+  into a new file at `path`, through Live's own File > Export Audio/Video driven by macOS Accessibility in the
+  background (`tools/live_export.py`, also runnable on its own). 8 bars at 140 BPM took about 9 s.
+- The range fields are stepped and read back; `options` sets the window's switches by name (e.g.
+  `{"Normalize": false}`), which Live keeps for the next export. The result lists every setting used.
+- The file is saved under a unique name in the save panel's folder, found through Live's last-folder preference,
+  and moved to `path`. An existing `path` is refused. A long export keeps waiting while Live renders.
+- Main only: the Rendered Track menu is a pop-up that background control can't open. Needs Accessibility
+  permission for the process (the Claude app has it). Run `tools/audio_check.py` on the file afterwards.
+
 ## Live behaviour to respect (measured 2026-11-10, `docs/UNITS.md`)
 
 - A track's own output meter reads **before** its mute and solo. Judge a mute by the main or the bus it feeds.

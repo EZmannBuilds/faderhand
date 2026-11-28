@@ -64,8 +64,9 @@ record_arrangement_automation(track="Lead", target={"device": "Auto Filter", "pa
 
 **Buses and routing:** `create_audio_bus`, `route_multiple_tracks`, `validate_routing`.
 **Racks:** `create_effect_rack`, `add_rack_chain`, `set_rack_macros`.
-**Render a passage to check it:** `record_track_audio` resamples the Main for N bars; `export_audio` drives
-Live's Export dialog where it is installed. Then analyse the file with WavRead (the separate WavRead skill, if installed) or
+**Render a passage to check it:** `record_track_audio` resamples the Main for N bars in real time;
+`export_audio(start="9.1.1", length="8.0.0", path="/abs/folder/Name.wav")` renders the Main offline through Live's
+Export window (macOS, Accessibility permission; a new path only). Then analyse the file with WavRead (the separate WavRead skill, if installed) or
 `tools/audio_check.py` in this repo.
 
 ## Check what a sampler does on note-off before planning silence

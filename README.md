@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 86 tools.
+then call its 87 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-86 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+87 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
@@ -124,7 +124,7 @@ conventions: [docs/TOOLS.md](docs/TOOLS.md).
 | Racks | 5 | `create_effect_rack`, `add_rack_chain`, `set_rack_macros` |
 | Sidechain | 2 | `inspect_device_sidechain`, `set_sidechain` |
 | Automation | 11 | `set_automation_points`, `get_automation`, `record_arrangement_automation` |
-| Clips, audio and recording | 9 | `make_test_clip`, `create_audio_clip`, `record_tracks_audio` |
+| Clips, audio and recording | 10 | `create_audio_clip`, `record_tracks_audio`, `export_audio` |
 | MIDI notes | 2 | `get_clip_notes`, `set_note_expression` |
 | Arrangement editing | 8 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
 | Transport, time and metering | 4 | `transport`, `set_song_time`, `measure_levels` |
@@ -197,9 +197,11 @@ slots, rack macro mapping) are not part of this release.
 
 ## Known limitations
 
-- **No Export Audio tool.** Live's API has no export call. Workaround: `record_track_audio` resamples the Main for
-  exact bars, and `tools/audio_check.py` measures the file (LUFS, true peak, clipping, loop seam).
-- **No groove or MIDI velocity editing** yet.
+- **Export is macOS only and Main only.** Live's API has no export call, so `export_audio` drives Live's Export
+  window through macOS Accessibility (it needs that permission). It can't pick a single track: for per-part stems,
+  `record_tracks_audio` records several tracks in one real-time pass. Check any render with `tools/audio_check.py`
+  (LUFS, true peak, clipping, loop seam).
+- **No groove or quantize editing** yet. MIDI velocity and expression edits are in (`set_note_expression`).
 - Arrangement automation can only be recorded in real time, not drawn. Curve tension has no effect on Live 12.4.
 - No native Group Track creation; reordering or deleting rack chains and saving rack presets aren't possible through
   the API.

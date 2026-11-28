@@ -4,7 +4,7 @@ Planned, **not implemented**. What exists today, and how well it's tested, is in
 
 | Item | Notes |
 |---|---|
-| Export Audio and stems | Live's API has no export call. Today: resample the Main for N bars (`record_track_audio`) and check it with `tools/audio_check.py` |
+| Export single-track stems | `export_audio` renders the Main only: background control can't open the Rendered Track pop-up. Today: `record_tracks_audio` records per-part stems in one real-time pass |
 | Groove editing | `Clip.quantize` and groove pool access exist in the LOM; not wrapped yet |
 | MPE note expression | Per-note pitch bend, slide and pressure. Velocity, chance, velocity range, release velocity and mute are done (`get_clip_notes`, `set_note_expression`) |
 | Windows install and testing | The code is plain Python, but nothing has been tested on Windows and there's no install script |

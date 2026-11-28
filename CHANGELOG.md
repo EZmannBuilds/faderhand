@@ -43,6 +43,16 @@
   - Offline: `tests/offline/test_arrangement_and_recording.py` (fake Live objects). Not yet run in Live from main;
     the code is the installed copy's, which the score bus session used in Live (23 takes on one track).
   - With this, every command in the installed copy matches main, so the installed copy can be replaced with main.
+- **`export_audio`** (87 tools), from the older ableton-tooling server: an offline export of the Main, faster than
+  real time, through Live's own File > Export Audio/Video. `tools/live_export.py` drives the window with macOS
+  Accessibility in the background, without taking the screen. It steps the range fields and reads them back, sets
+  the window's switches by name, saves under a unique name and moves the file to the path asked for. It refuses an
+  existing path, and it keeps waiting while Live renders a long export. Main only: background control can't open the
+  Rendered Track pop-up. macOS only, and it needs Accessibility permission. Offline:
+  `tests/offline/test_export_audio.py`. In Live (2026-11-27), a soloed export matched a real-time resample of the
+  same bars sample for sample. One fix over the older copy: a press on Save can be lost, so the exporter presses
+  again while the save panel stays open, and cancels both windows if it never closes (the older copy left Live
+  behind an open panel). With this, Faderhand's server has every tool the ableton-tooling server had.
 
 ## v0.7.0-alpha.1 (2026-11-21)
 
