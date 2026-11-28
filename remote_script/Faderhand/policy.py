@@ -55,7 +55,7 @@ CLASSES = {
     "split_arrangement_clip": WRITE, "create_arrangement_midi_clip": WRITE, "record_track_audio": WRITE, "record_tracks_audio": WRITE, "set_parameter_by_name": WRITE, "cut_arrangement_range": WRITE,
     "set_arm": WRITE, "set_song_time": WRITE, "set_note_expression": WRITE,
     "quantize_notes": WRITE, "load_groove": WRITE, "set_groove": WRITE, "set_groove_amount": WRITE,
-    "set_clip_groove": WRITE,
+    "set_clip_groove": WRITE, "build_feedback_bass": WRITE, "follow_notes": WRITE,
 }
 DELETES = {"delete_track", "delete_device", "delete_arrangement_clip", "cut_arrangement_range"}
 

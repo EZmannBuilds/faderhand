@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 import random
 
-EXT_VERSION = "0.6.0"
+EXT_VERSION = "0.7.0"
 
 
 class ToolError(Exception):
@@ -1960,3 +1960,192 @@ def cmd_load_groove(cs, name, folder=None):
     before = len(_pool(cs))
     cs.application().browser.load_item(item)
     return {"loading": item.name[:-4], "folder": f, "source": source, "pool_before": before}
+
+
+# ------------------------------------------------------------------------------------- note-follow automation
+def _note_number(v):
+    """A note as a MIDI number, or a name in Live's naming (C3 = 60): "E1" = 40, "F#2" = 54, "Bb0" = 34."""
+    import re
+    if isinstance(v, (int, float)) and not isinstance(v, bool):
+        return int(round(v))
+    m = re.match(r"^([A-Ga-g])([#b]?)(-?\d+)$", str(v).strip())
+    if not m:
+        raise ToolError("note %r: use a MIDI number or a name like E1, F#2, Bb0 (Live's naming, C3 = 60)" % (v,))
+    base = {"c": 0, "d": 2, "e": 4, "f": 5, "g": 7, "a": 9, "b": 11}[m.group(1).lower()]
+    return base + {"#": 1, "b": -1, "": 0}[m.group(2)] + (int(m.group(3)) + 2) * 12
+
+
+def _follow_points(notes, transpose=0, lo=0.0, hi=127.0, chord="lowest", end=None):
+    """Pure. One step per onset: the onset's lowest (or highest) unmuted note plus `transpose`, kept in lo..hi. The
+    first value also covers the clip's start. Returns (points [(beat, value)], clamped)."""
+    if chord not in ("lowest", "highest"):
+        raise ToolError("chord is lowest or highest, not %r" % (chord,))
+    by = {}
+    for n in notes:
+        if n.get("mute") or (end is not None and n["start"] >= end - 1e-9):
+            continue
+        at = round(n["start"], 6)
+        by.setdefault(at, []).append(n["pitch"])
+    if not by:
+        raise ToolError("the clip has no notes to follow")
+    pts, clamped = [], 0
+    for at in sorted(by):
+        v = (min if chord == "lowest" else max)(by[at]) + int(transpose)
+        kept = min(hi, max(lo, v))
+        clamped += kept != v
+        if not pts or pts[-1][1] != float(kept):
+            pts.append((at, float(kept)))
+    if pts[0][0] > 0:
+        pts.insert(0, (0.0, pts[0][1]))
+    return pts, clamped
+
+
+def _param_kind(p):
+    """'hz' for a frequency parameter (its display ends in Hz), else 'note' (its raw value is a MIDI note)."""
+    d = p.str_for_value(p.value).strip().lower()
+    return "hz" if d.endswith("hz") else "note"
+
+
+def cmd_follow_notes(cs, track, slot, target, transpose=0, chord="lowest"):
+    """Make a pitch parameter follow a Session clip's notes: a step in the clip's envelope at every onset, set to the
+    onset's lowest note plus `transpose` semitones (chord="highest" for the top note). A note parameter (raw value
+    a MIDI note: Roar FB Note, Resonators I Note) gets the note; a frequency parameter (display in Hz: Spectral
+    Resonator Freq. Hz, a filter's Frequency) gets the note's frequency (A4 = 440 Hz, MIDI 69). Replaces the
+    parameter's envelope in that clip. Arrangement clips have no clip envelopes in Live's API."""
+    t, clip, p, env = _envelope(cs, track, slot, target, create=True)
+    if env is None:
+        raise ToolError("Live gave no envelope for %s in that clip" % p.name)
+    end = clip.loop_end if clip.looping else clip.end_marker
+    notes = [_note_dict(n) for n in _live_notes(clip)]
+    kind = _param_kind(p)
+    if kind == "hz":
+        pts, clamped = _follow_points(notes, transpose, 0, 127, chord, end)
+        pts = [(b, float(_to_raw(cs, p, "%.3f Hz" % (440.0 * 2 ** ((v - 69) / 12.0)), "display"))) for b, v in pts]
+    else:
+        pts, clamped = _follow_points(notes, transpose, p.min, p.max, chord, end)
+    import Live
+    env.delete_events_in_range(0.0, end + 1e-6)
+    for i, (b, v) in enumerate(pts):
+        env.create_event(Live.Envelope.EnvelopeEvent(b, v))
+        if i + 1 < len(pts):
+            env.create_event(Live.Envelope.EnvelopeEvent(pts[i + 1][0], v))
+    back = [_read(p, env, b) for b, _ in pts]
+    bad = [dict(r, wanted=v) for r, (b, v) in zip(back, pts) if abs(r["raw"] - v) > 1e-3]
+    if bad:
+        raise ToolError("written, but %d steps read back different: %s" % (len(bad), bad[:10]))
+    return {"track": cs._ref(t), "parameter": p.name, "kind": kind, "steps": len(pts), "transpose": int(transpose),
+            "chord": chord, "clamped": clamped, "steps_read_back": [{"beat": r["beat"], "value": r["display"]}
+                                                                  for r in back[:64]]}
+
+
+# ------------------------------------------------------------------------------------- amp-feedback bass
+# A tuned resonance fed back through distortion: the whine of an amp feeding back, tracking the bass. Stock devices,
+# in one Audio Effect Rack after the instrument: Auto Filter (Vowel) -> Saturator (Waveshaper, DC filter) -> Spectral
+# Resonator (the tuned whine) -> Roar (feedback tuned to the same note, through a shaper) -> EQ Eight (tilt) ->
+# Limiter (-1 dB ceiling). Live's API can't route Spectral Resonator's or Roar's MIDI sidechain, so the resonance
+# follows the notes through follow_notes: clip envelope steps on Spectral Resonator's Freq. Hz (its pitch control in
+# this mode; its Note parameter didn't move the sound, measured) and on Roar's FB Note.
+# Stability (measured 2026-11-27, Live 12.4.16, a saw bass peaking about -5 dBFS, and 6 dB hotter): Roar's loop
+# self-oscillates once Feedback x Shaper 1 Amt is too high, and then keeps ringing after the notes stop, whatever
+# Fb Gate says (growl at 55 % feedback rang at -15.8 dBFS in the rest bar; screaming at 80 % / 65 % at -4.5). The
+# presets sit below that edge with margin: every rest bar decays below -90 dBFS. Raising Feedback or Shaper 1 Amt
+# past a preset can make the chain ring; the Limiter then holds it at -1 dBFS but doesn't stop it.
+_FB_CHAIN = ("Auto Filter", "Saturator", "Spectral Resonator", "Roar", "EQ Eight", "Limiter")
+_FB_COMMON = {
+    "Auto Filter": {"Filter Type": "Vowel"},
+    "Saturator": {"Type": "Waveshaper", "Pre Dc Filter": "On"},
+    "Roar": {"FB Time Mode": "Note", "Fb Gate On": "On"},
+    "EQ Eight": {"8 Filter On A": "On", "8 Filter Type A": "High Shelf", "8 Frequency A": "3000 Hz"},
+    "Limiter": {"Ceiling": "-1.0 dB"},
+}
+_FB_PRESETS = {
+    "subtle": {
+        "Auto Filter": {"Formant": "30 %", "Resonance": "25 %", "Drive": "0 %"},
+        "Saturator": {"Drive": "3 dB", "WS Drive": "35 %", "WS Curve": "20 %", "WS Depth": "0 %", "Dry/Wet": "60 %"},
+        "Spectral Resonator": {"Decay": "300 ms", "Dry Wet": "20 %"},
+        "Roar": {"Shaper 1 Type": "Soft Sine", "Shaper 1 Amt": "20 %", "Feedback": "30 %", "Dry/Wet": "45 %"},
+        "EQ Eight": {"8 Gain A": "-2 dB"},
+    },
+    "growl": {
+        "Auto Filter": {"Formant": "55 %", "Resonance": "45 %", "Drive": "20 %"},
+        "Saturator": {"Drive": "8 dB", "WS Drive": "60 %", "WS Curve": "45 %", "WS Depth": "20 %", "Dry/Wet": "85 %"},
+        "Spectral Resonator": {"Decay": "600 ms", "Dry Wet": "35 %"},
+        "Roar": {"Shaper 1 Type": "Tube Preamp", "Shaper 1 Amt": "45 %", "Drive": "6 dB", "Feedback": "40 %",
+                 "Dry/Wet": "70 %"},
+        "EQ Eight": {"8 Gain A": "-4 dB"},
+    },
+    "screaming": {
+        "Auto Filter": {"Formant": "75 %", "Resonance": "65 %", "Drive": "40 %"},
+        "Saturator": {"Drive": "14 dB", "WS Drive": "85 %", "WS Curve": "70 %", "WS Depth": "45 %",
+                      "WS Period": "20 %", "Dry/Wet": "100 %"},
+        "Spectral Resonator": {"Decay": "1200 ms", "Dry Wet": "50 %"},
+        "Roar": {"Shaper 1 Type": "Diode Clipper", "Shaper 1 Amt": "40 %", "Drive": "12 dB", "Feedback": "45 %",
+                 "Dry/Wet": "90 %"},
+        "EQ Eight": {"8 Frequency A": "2500 Hz", "8 Gain A": "-6 dB"},
+    },
+}
+
+
+def _fb_settings(preset, fb_note, overrides=None):
+    """Pure. Every parameter the chain sets, per device: the common settings, the preset's, Roar's FB Note, then
+    overrides ({device: {parameter: value}}) on top."""
+    if preset not in _FB_PRESETS:
+        raise ToolError("preset is one of %s, not %r" % (sorted(_FB_PRESETS), preset))
+    out = {}
+    for name in _FB_CHAIN:
+        out[name] = dict(_FB_COMMON.get(name, {}))
+        out[name].update(_FB_PRESETS[preset].get(name, {}))
+    out["Roar"]["FB Note"] = float(fb_note)
+    out["Spectral Resonator"]["Freq. Hz"] = "%.2f Hz" % (440.0 * 2 ** ((fb_note - 69) / 12.0))
+    for dev, vals in (overrides or {}).items():
+        if dev not in out:
+            raise ToolError("overrides: no device %r in the chain %s" % (dev, list(_FB_CHAIN)))
+        out[dev].update(vals)
+    return out
+
+
+def cmd_build_feedback_bass(cs, track, preset="growl", key_note="E1", transpose=24, follow_slot=None,
+                            overrides=None):
+    """Put the amp-feedback bass chain after a track's bass, in one Audio Effect Rack named "Feedback Bass
+    (preset)": Auto Filter (Vowel) -> Saturator (Waveshaper) -> Spectral Resonator (the tuned whine) -> Roar (tuned
+    feedback) -> EQ Eight (tilt) -> Limiter (-1 dB). preset: subtle, growl or screaming. The resonance is tuned to
+    key_note + transpose semitones (Live's naming, C3 = 60; Roar's range C-1..C5). follow_slot: a Session clip on
+    this track whose notes the resonance then follows (follow_notes on Spectral Resonator's Freq. Hz and Roar's FB
+    Note). overrides: {device: {parameter: value}} on top of the preset. Every setting is read back."""
+    t = cs._track(track)
+    devs = list(t.devices)
+    if any(d.name.startswith("Feedback Bass") for d in devs):
+        raise ToolError("%s already has a Feedback Bass rack: use another track or remove it first" % t.name)
+    if t.has_midi_input and not any(int(getattr(d, "type", 0) or 0) == 1 for d in devs):
+        raise ToolError("%s is a MIDI track with no instrument: load the bass first (the chain goes after it)" % t.name)
+    fb = _note_number(key_note) + int(transpose)
+    if not 12 <= fb <= 84:
+        raise ToolError("key_note + transpose is MIDI note %d, outside Roar's FB Note range 12..84 (C-1..C5)" % fb)
+    settings = _fb_settings(preset, fb, overrides)
+    rack = t.insert_device("Audio Effect Rack")
+    rack.name = "Feedback Bass (%s)" % preset
+    ch = rack.insert_chain()
+    if ch is None:
+        ch = list(rack.chains)[-1]
+    ch.name = "Feedback"
+    for name in _FB_CHAIN:
+        ch.insert_device(name)
+    chain_devs = list(ch.devices)
+    if [d.name for d in chain_devs] != list(_FB_CHAIN):
+        raise ToolError("the chain came out as %s (rack %r left on %s)" % ([d.name for d in chain_devs], rack.name,
+                                                                           t.name))
+    report = []
+    for d in chain_devs:
+        for pname, val in settings[d.name].items():
+            r = cs._set_param(cs._param(d, pname), val, "auto")
+            report.append({"device": d.name, "parameter": pname, "set": val, "reads": r["after"]["display"]})
+    ri = list(t.devices).index(rack)
+    targets = [{"device": ri, "chain": "0", "chain_device": _FB_CHAIN.index(d), "parameter": p}
+               for d, p in (("Spectral Resonator", "Freq. Hz"), ("Roar", "FB Note"))]
+    roar = chain_devs[_FB_CHAIN.index("Roar")]
+    out = {"track": cs._ref(t), "rack": rack.name, "rack_index": ri, "chain": [d.name for d in chain_devs],
+           "preset": preset, "tuned_to": {"midi": fb, "name": cs._param(roar, "FB Note").str_for_value(fb)},
+           "settings": report, "follow_targets": targets}
+    if follow_slot is not None:
+        out["follow"] = [cmd_follow_notes(cs, track, follow_slot, x, transpose=transpose) for x in targets]
+    return out

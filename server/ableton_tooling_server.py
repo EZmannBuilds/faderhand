@@ -1030,6 +1030,32 @@ def set_clip_groove(track: Ref, groove: Union[int, str], slot: Optional[int] = N
     return out(call("set_clip_groove", track=track, groove=groove, slot=slot, arrangement_index=arrangement_index))
 
 
+# ============================================================================================ sound design
+@mcp.tool()
+@guarded
+def build_feedback_bass(track: Ref, preset: str = "growl", key_note: Union[int, str] = "E1", transpose: int = 24,
+                        follow_slot: Optional[int] = None, overrides: Optional[dict] = None) -> str:
+    """The amp-feedback bass: a tuned resonance fed back through distortion, tracking the bass. Adds one Audio Effect
+    Rack "Feedback Bass (preset)" after the track's instrument: Auto Filter (Vowel) -> Saturator (Waveshaper) ->
+    Spectral Resonator -> Roar (tuned feedback) -> EQ Eight (tilt) -> Limiter (-1 dB). preset: subtle, growl or
+    screaming (measured not to ring on after the notes stop). The resonance is tuned to key_note + transpose
+    semitones (Live's naming, C3 = 60). follow_slot: a Session clip on the track whose notes the resonance then
+    follows. overrides: {device: {parameter: value}}. Every setting is read back."""
+    return out(call("build_feedback_bass", track=track, preset=preset, key_note=key_note, transpose=transpose,
+                    follow_slot=follow_slot, overrides=overrides))
+
+
+@mcp.tool()
+@guarded
+def follow_notes(track: Ref, slot: int, target: dict, transpose: int = 0, chord: str = "lowest") -> str:
+    """Make a pitch parameter follow a Session clip's notes: a step in the clip's envelope at every onset, at the
+    onset's lowest (or chord="highest") note plus transpose semitones. Note parameters get the note (Roar FB Note,
+    Resonators I Note); frequency parameters get its frequency (Spectral Resonator Freq. Hz, a filter's Frequency).
+    target as in set_automation_points, e.g. {"device": 1, "chain": "0", "chain_device": 2, "parameter": "Freq. Hz"}.
+    Replaces that parameter's envelope in the clip; read back."""
+    return out(call("follow_notes", track=track, slot=slot, target=target, transpose=transpose, chord=chord))
+
+
 # ============================================================================================ write permission
 @mcp.tool()
 @guarded

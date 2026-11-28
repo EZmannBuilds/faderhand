@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**94 tools.**
+**96 tools.**
 
 ## Connection and inspection
 
@@ -112,6 +112,7 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `param_state` | track, target | A parameter's value and automation state (0 none, 1 playing, 2 overridden). |
 | `re_enable_automation` | track?, target? | Re-enable overridden automation for one parameter, or the whole song. |
 | `back_to_arrangement` | none | Press Back to Arrangement (tracks follow the Arrangement and its automation again). |
+| `follow_notes` | track, slot, target, transpose?, chord? | Make a pitch parameter follow a Session clip's notes: a step in the clip's envelope at every onset, at the onset's lowest (or chord="highest") note plus transpose semitones. |
 
 ## Clips, audio and recording
 
@@ -146,6 +147,12 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `set_groove` | groove, timing?, random?, velocity?, quantize?, base? | Change a pool groove (index or name): timing, random, quantize 0-100 %, velocity -100..100 %, base one of 1/4, 1/8, 1/8T, 1/16, 1/16T, 1/32. |
 | `set_groove_amount` | amount | The groove pool's Global Amount in percent, 0-131.25 as Live's dial; 0 turns every groove off. |
 | `set_clip_groove` | track, groove, slot?, arrangement_index? | Assign a pool groove (index or name) to a clip. |
+
+## Sound design
+
+| Tool | Arguments | What it does |
+|---|---|---|
+| `build_feedback_bass` | track, preset?, key_note?, transpose?, follow_slot?, overrides? | The amp-feedback bass: a tuned resonance fed back through distortion, tracking the bass. |
 
 ## Arrangement editing
 

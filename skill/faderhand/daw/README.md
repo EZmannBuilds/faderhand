@@ -164,3 +164,25 @@ get_groove_pool(clips=True)                      # which clips use which groove
   remove a clip's groove. To switch one off, set its amounts to 0 or turn the Global Amount down.
 - New clips can come with a groove already assigned (seen in a Set whose pool had one). Check `get_groove_pool(clips=True)`
   before relying on straight timing.
+
+## Amp-feedback bass
+
+A tuned resonance fed back through distortion: the whine of an amp feeding back, tracking the bass line.
+
+```
+build_feedback_bass(track="Bass", preset="growl", key_note="E1", transpose=24, follow_slot=0)
+```
+
+- It goes after the track's instrument as one rack, "Feedback Bass (growl)": Auto Filter (Vowel) -> Saturator
+  (Waveshaper) -> Spectral Resonator -> Roar (tuned feedback) -> EQ Eight (tilt) -> Limiter (-1 dB). Bypass or
+  delete the rack to take it all out.
+- `preset`: `subtle`, `growl` or `screaming`. `key_note` + `transpose` sets the resonance's pitch: two octaves above
+  the bass (24) sits in the whine's register. Live's note names: C3 = 60.
+- `follow_slot` makes the resonance follow that Session clip's notes. Without it, the resonance stays on one pitch:
+  in key for a one-note part, clashing on the others. Arrangement clips can't follow (no clip envelopes in the API).
+  Build and follow in a Session clip, then record it.
+- `follow_notes` does the same for any pitch parameter, e.g. a Resonators note or a filter's frequency.
+- The presets were measured to die away when the notes stop. Raising Roar's Feedback or Shaper 1 Amt past them can
+  make the chain ring on forever (the Limiter then holds it at -1 dBFS). If a tail won't stop, lower those two.
+- Listen before calling it right: the measurements show the resonance moves and doesn't run away, not that it
+  sounds good on this bass.
