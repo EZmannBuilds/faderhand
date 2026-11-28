@@ -5,7 +5,7 @@
 # Runs on Live's main thread (the core's dispatcher schedules it). Raise ToolError for a clear, expected failure.
 from __future__ import absolute_import, print_function, unicode_literals
 
-EXT_VERSION = "0.2.0"
+EXT_VERSION = "0.3.0"
 
 
 class ToolError(Exception):
@@ -1136,3 +1136,196 @@ def cmd_show_devices(cs, track):
     cs._song.view.selected_track = t
     cs.application().view.show_view("Detail/DeviceChain")
     return {"track": cs._ref(t), "view": "Detail/DeviceChain"}
+
+
+# ------------------------------------------------------------------------------------- parameters by name
+_KIND = {1: "instrument", 2: "audio_effect", 4: "midi_effect"}
+
+
+def _walk_devices(devs, top=None, prefix=()):
+    """Every device on a track, racks included: (top device index, chain path or None, chain_device or None, device).
+    The address is what set_device_parameter takes (device, chain, chain_device)."""
+    for j, d in enumerate(devs):
+        if top is None:
+            here = (j, None, None)
+        else:
+            here = (top, "/".join(str(x) for x in prefix), j)
+        yield here + (d,)
+        if getattr(d, "can_have_chains", False):
+            for c, ch in enumerate(d.chains):
+                path = (prefix + (j, c)) if top is not None else (c,)
+                for sub in _walk_devices(list(ch.devices), here[0], path):
+                    yield sub
+
+
+def _find_params(cs, t, name):
+    key = str(name).strip().lower()
+    hits = []
+    for top, chain, cd, d in _walk_devices(list(t.devices)):
+        for i, p in enumerate(d.parameters):
+            if p.name.lower() == key or p.original_name.lower() == key:
+                hits.append({"device": top, "chain": chain, "chain_device": cd, "device_name": d.name,
+                             "kind": _KIND.get(int(getattr(d, "type", 0) or 0), "other"), "parameter": p.name,
+                             "index": i, "value": p.value, "min": p.min, "max": p.max,
+                             "display": p.str_for_value(p.value), "quantized": bool(p.is_quantized), "_p": p})
+    return hits
+
+
+def _public(h):
+    return {k: v for k, v in h.items() if k != "_p"}
+
+
+def cmd_find_parameter(cs, track, name):
+    """Every parameter called `name` (its shown or original name, any case) on any device of a track, racks and
+    nested racks included. Each match gives its address (device, chain, chain_device, as set_device_parameter takes
+    them), device name and kind, raw value, range and display."""
+    t = cs._track(track)
+    return {"track": cs._ref(t), "name": name, "matches": [_public(h) for h in _find_params(cs, t, name)]}
+
+
+def cmd_set_parameter_by_name(cs, track, name, value, units="auto", prefer=None, device_name=None):
+    """Set the one parameter called `name` on a track, wherever it is (racks included). When several devices have
+    it, narrow with prefer ("instrument", "audio_effect", "midi_effect") and/or device_name; if it is still
+    ambiguous nothing is written and every match is listed."""
+    t = cs._track(track)
+    hits = _find_params(cs, t, name)
+    if not hits:
+        raise ToolError("no parameter %r on any device of %s" % (name, t.name))
+    pool = hits
+    if device_name:
+        pool = [h for h in pool if h["device_name"].lower() == str(device_name).lower()]
+    if prefer and len(pool) > 1:
+        pool = [h for h in pool if h["kind"] == prefer] or pool
+    if len(pool) != 1:
+        raise ToolError("%r on %s: %d matches after narrowing; nothing written. Matches: %s"
+                        % (name, t.name, len(pool), [_public(h) for h in (pool or hits)]))
+    h = pool[0]
+    r = cs._set_param(h["_p"], value, units)
+    r.update({"track": cs._ref(t), "at": _public(h)})
+    return r
+
+
+# ------------------------------------------------------------------------------------- arrangement range and multi-track recording
+def cmd_cut_arrangement_range(cs, tracks, start, end):
+    """Remove everything in [start, end) song time from one or more tracks' Arrangement: clips that cross an edge
+    are split there (split_arrangement_clip, plays as before), then every clip inside the range is deleted. Nothing
+    moves: the range is left empty. Disposable sets only."""
+    cs._require_scratch()
+    s, e = _beats(cs, start), _beats(cs, end)
+    if not s < e:
+        raise ToolError("cut range is empty: start %g must be before end %g" % (s, e))
+    eps = 1e-6
+    out = []
+    for ref in (tracks if isinstance(tracks, (list, tuple)) else [tracks]):
+        t = cs._track(ref)
+        splits = 0
+        for x in (s, e):
+            for c in [c for c in _aclips(t) if c.start_time + eps < x < c.end_time - eps]:
+                cmd_split_arrangement_clip(cs, ref, x, at=c.start_time)
+                splits += 1
+        inside = [c for c in _aclips(t) if c.start_time >= s - eps and c.end_time <= e + eps]
+        gone = [[c.start_time, c.end_time] for c in inside]
+        for c in inside:
+            t.delete_clip(c)
+        left = [[c.start_time, c.end_time] for c in _aclips(t) if c.start_time < e - eps and c.end_time > s + eps]
+        if left:
+            raise ToolError("%s: clips still overlap the cut after it ran: %s" % (t.name, left))
+        out.append({"track": cs._ref(t), "splits": splits, "deleted": gone})
+    return {"start": s, "end": e, "tracks": out}
+
+
+def cmd_record_tracks_audio(cs, takes, bars=2):
+    """Several record_track_audio takes in ONE pass: takes = [{"dst", "source", "slot"?, "channel"?}, ...], each dst
+    a different audio track. All are routed and armed first, then every slot is launched in the same tick, so they
+    start together on Live's launch quantization and each stops after exactly `bars` bars. Asynchronous: poll
+    record_tracks_audio_status. Set the playhead first and don't press play (the launch starts the transport)."""
+    if not takes:
+        raise ToolError("takes is empty")
+    length = float(bars) * _beats_per_bar(cs)
+    prep, seen = [], set()
+    for k in takes:
+        t = cs._track(k["dst"])
+        if t.has_midi_input:
+            raise ToolError("%s is a MIDI track: record audio onto an audio track" % t.name)
+        if t in seen:
+            raise ToolError("%s is listed twice: one take per destination track" % t.name)
+        seen.add(t)
+        slot = int(k.get("slot") or 0)
+        if slot < 0:
+            raise ToolError("slot must be 0 or more, got %s" % slot)
+        have = len(list(t.clip_slots))
+        if slot + 1 - have > 16:
+            raise ToolError("slot %s is far past %s's %d Session slots" % (slot, t.name, have))
+        choices = list(t.available_input_routing_types)
+        try:
+            src = cs._track(k["source"])
+            want = [r for r in choices if getattr(r, "attached_object", None) == src]
+        except Exception:
+            want = [r for r in choices if r.display_name == str(k["source"])]
+        if len(want) != 1:
+            raise ToolError("%s input %r: %d matches; choices %s" % (t.name, k["source"], len(want),
+                                                                   [r.display_name for r in choices]))
+        prep.append({"t": t, "slot": slot, "route": want[0], "channel": k.get("channel")})
+    added = 0                                   # every check passed: now change the Set
+    for p in prep:
+        while p["slot"] >= len(list(p["t"].clip_slots)):
+            cs._song.create_scene(-1)
+            added += 1
+        p["cslot"] = list(p["t"].clip_slots)[p["slot"]]
+        if p["cslot"].has_clip:
+            raise ToolError("slot %s of %s already holds a clip" % (p["slot"], p["t"].name))
+    for p in prep:
+        p["t"].input_routing_type = p["route"]
+    rec = {"phase": "routing", "done": False, "error": None, "takes": [{"dst": cs._ref(p["t"])} for p in prep]}
+    _RECA["multi"] = rec
+
+    def tick():
+        if _RECA.get("multi") is not rec or rec["done"]:
+            return
+        try:
+            if rec["phase"] == "routing":
+                for p, r in zip(prep, rec["takes"]):
+                    t = p["t"]
+                    if p["channel"] is not None:
+                        chs = [c for c in t.available_input_routing_channels if c.display_name == p["channel"]]
+                        if len(chs) != 1:
+                            raise ToolError("%s channel %r not offered" % (t.name, p["channel"]))
+                        t.input_routing_channel = chs[0]
+                    t.current_monitoring_state = 2
+                    t.arm = True
+                    r.update(input=t.input_routing_type.display_name, channel=t.input_routing_channel.display_name,
+                             slot=p["slot"])
+                rec["phase"] = "launch"
+            elif rec["phase"] == "launch":
+                for p in prep:
+                    p["cslot"].fire(record_length=length)
+                rec["phase"] = "recording"
+            elif rec["phase"] == "recording":
+                for p, r in zip(prep, rec["takes"]):
+                    c = p["cslot"].clip
+                    if c is not None and c.is_recording:
+                        r["started"] = True
+                    if r.get("started") and not r.get("done") and c is not None and not c.is_recording:
+                        p["t"].arm = False
+                        fp = c.file_path or ""
+                        r.update(done=True, clip_length=c.length, file=fp)
+                        if "Temp Project" in fp or "/Live Recordings/" in fp:
+                            r["warning"] = "recorded outside this Set's project: save the Set in a project folder"
+                if all(r.get("done") for r in rec["takes"]):
+                    rec.update(phase="done", done=True)
+                    return
+            cs.schedule_message(1, tick)
+        except Exception as e:
+            for p in prep:
+                p["t"].arm = False
+            rec.update(phase="done", done=True, error="%s: %s" % (type(e).__name__, e))
+
+    cs.schedule_message(1, tick)
+    return {"started": True, "takes": len(prep), "scenes_added": added, "bars": bars, "beats": length}
+
+
+def cmd_record_tracks_audio_status(cs):
+    rec = _RECA.get("multi")
+    if rec is None:
+        raise ToolError("no multi-track recording started")
+    return dict(rec)

@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 79 tools.
+then call its 83 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-79 tools in 12 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+83 tools in 12 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
