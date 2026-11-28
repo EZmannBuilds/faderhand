@@ -776,6 +776,38 @@ def record_tracks_audio(takes: list, bars: int = 2, wait: bool = True) -> str:
     return out(st)
 
 
+EXPORTER = os.path.join(os.path.dirname(os.path.abspath(__file__)), "..", "tools", "live_export.py")
+
+
+def _export_cmd(start, length, path, options=None):
+    cmd = ["uv", "run", "-q", "--with", "pyobjc-framework-ApplicationServices", "--with", "pyobjc-framework-Cocoa",
+           "--with", "pyobjc-framework-Quartz", "python", EXPORTER,
+           "--start", str(start), "--length", str(length), "--out", path]
+    for k, v in (options or {}).items():
+        cmd += ["--option", "%s=%s" % (k, "on" if v else "off")]
+    return cmd
+
+
+@mcp.tool()
+@guarded
+def export_audio(start, length, path: str, options: Optional[dict] = None, timeout: float = 1800) -> str:
+    """Offline export (faster than real time) of the Main through Live's own File > Export Audio/Video, driven by
+    macOS Accessibility in the background (Live stays behind other windows; no full-screen control needed).
+    start "bar.beat.sixteenth" (e.g. "9.1.1"), length "bars.beats.sixteenths" (e.g. "8.0.0"), path = absolute path of
+    a NEW .wav/.aif/.flac (an existing file is refused). options: Export window switches by name, e.g.
+    {"Normalize": false, "Render as Loop": false, "Include Return and Main Effects": true}; Live keeps them for the
+    next export, and the result lists every setting it used. Main only. macOS only; needs Accessibility permission.
+    Measured: 8 bars at 140 BPM in about 9 s. Then run tools/audio_check.py on the file."""
+    import subprocess
+    r = subprocess.run(_export_cmd(start, length, path, options), capture_output=True, text=True,
+                       timeout=float(timeout) + 120)
+    line = (r.stdout.strip().splitlines() or [""])[-1]
+    try:
+        return out(json.loads(line))
+    except ValueError:
+        return out({"ok": False, "error": "exporter failed: %s" % (r.stderr.strip()[-800:] or line)})
+
+
 @mcp.tool()
 @guarded
 def find_parameter(track: Ref, name: str) -> str:

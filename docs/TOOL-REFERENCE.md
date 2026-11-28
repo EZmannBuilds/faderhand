@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**86 tools.**
+**87 tools.**
 
 ## Connection and inspection
 
@@ -126,6 +126,7 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `duplicate_to_arrangement` | track, slot, at | Copy a session clip into the Arrangement. |
 | `record_track_audio` | dst, source, slot?, bars?, channel?, wait? | Record (resample) a track's output, or "Resampling" for the Main, into a session slot of an audio track for exactly `bars` bars. |
 | `record_tracks_audio` | takes, bars?, wait? | Record several tracks' outputs in ONE real-time pass: takes = [{"dst": audio track, "source": track or "Resampling", "slot": n, "channel": optional}], one take per destination. |
+| `export_audio` | start, length, path, options?, timeout? | Offline export (faster than real time) of the Main through Live's own File > Export Audio/Video, driven by macOS Accessibility in the background (Live stays behind other windows; no full-screen control needed). start "bar.beat.sixteenth" (e.g. "9.1.1"), length "bars.beats.sixteenths" (e.g. "8.0.0"), path = absolute path of a NEW .wav/.aif/.flac (an existing file is refused). options: Export window switches by name, e.g. {"Normalize": false, "Render as Loop": false, "Include Return and Main Effects": true}; Live keeps them for the next export, and the result lists every setting it used. |
 
 ## MIDI notes
 
