@@ -65,6 +65,21 @@
   - `probe` paths gain `item:N` and `child:NAME` steps, to reach the groove pool and the browser.
   - Offline: `tests/offline/test_groove.py`. In Live: `tests/test_groove.py`, 13/13 on Live 12.4.16. A render with
     Swing 16ths 66 at Global Amount 100 moved every off 16th 41.7 ms late and left the on-beat 16ths in place.
+- **Amp-feedback bass** (`build_feedback_bass`, `follow_notes`; `EXT_VERSION` 0.7.0, 96 tools in 15 groups),
+  requested on 2026-11-16 and kept until now in the older ableton-tooling backlog. It is a tuned resonance fed back
+  through distortion, like an amp feeding back, that tracks the bass. Stock devices, in one rack after the
+  instrument: Auto Filter (Vowel), Saturator (Waveshaper), Spectral Resonator, Roar (tuned feedback), EQ Eight
+  (tilt) and a Limiter at -1 dB. Three presets: subtle, growl, screaming.
+  - Live's API can't route Spectral Resonator's or Roar's MIDI sidechain. So `follow_notes` writes the clip's notes
+    into clip-envelope steps on Spectral Resonator's Freq and Roar's FB Note. It works on any note or frequency
+    parameter, Session clips only.
+  - Measured in Live, `tests/test_feedback_bass.py` passes 15/15:
+    - every preset dies away after the notes and peaks at -1 dBFS or below, also with a 6 dB hotter bass;
+    - following the notes takes the static resonance out of the G bar by 74.7 dB.
+  - Roar's feedback self-oscillates and rings on past its Fb Gate when Feedback times Shaper 1 Amt is too high (the
+    first growl at 55 % did), so the presets sit below that edge.
+  - Offline: `tests/offline/test_feedback_bass.py`. It also checks every preset parameter name against the names
+    Live 12.4.16 reported.
 
 ## v0.7.0-alpha.1 (2026-11-21)
 

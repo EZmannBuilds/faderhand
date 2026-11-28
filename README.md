@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 94 tools.
+then call its 96 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-94 tools in 14 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+96 tools in 15 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
@@ -123,10 +123,11 @@ conventions: [docs/TOOLS.md](docs/TOOLS.md).
 | Devices and parameters | 12 | `load_effect`, `set_device_parameter`, `find_parameter` |
 | Racks | 5 | `create_effect_rack`, `add_rack_chain`, `set_rack_macros` |
 | Sidechain | 2 | `inspect_device_sidechain`, `set_sidechain` |
-| Automation | 11 | `set_automation_points`, `get_automation`, `record_arrangement_automation` |
+| Automation | 12 | `set_automation_points`, `record_arrangement_automation`, `follow_notes` |
 | Clips, audio and recording | 10 | `create_audio_clip`, `record_tracks_audio`, `export_audio` |
 | MIDI notes | 2 | `get_clip_notes`, `set_note_expression` |
 | Groove and quantize | 7 | `quantize_notes`, `load_groove`, `set_clip_groove` |
+| Sound design | 1 | `build_feedback_bass` |
 | Arrangement editing | 8 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
 | Transport, time and metering | 4 | `transport`, `set_song_time`, `measure_levels` |
 

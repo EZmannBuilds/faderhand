@@ -164,6 +164,11 @@ The command names are those of the Remote Script (`info` lists them). The MCP to
   note filters; collisions refused; notes that now run into the next of their pitch are shortened as Live does and
   listed), `list_grooves` (search by words), `load_groove` (into the pool; optionally onto a clip), `get_groove_pool`,
   `set_groove`, `set_groove_amount`, `set_clip_groove`. A clip's groove can't be removed through the API.
+- **Sound design:** `build_feedback_bass(track, preset, key_note, transpose, follow_slot)`: the amp-feedback bass
+  chain in one rack after the instrument (Auto Filter Vowel, Saturator Waveshaper, Spectral Resonator, Roar tuned
+  feedback, EQ Eight tilt, Limiter at -1 dB); presets subtle, growl, screaming, measured not to ring on after the
+  notes. `follow_notes(track, slot, target, transpose)`: a pitch parameter (note or Hz) follows a Session clip's
+  notes, one envelope step per onset.
 - `probe` paths can walk lists and the browser: `song/attr:groove_pool/attr:grooves/item:0`,
   `browser/attr:packs/child:Core Library/child:Grooves`.
 - **Offline tools:**
