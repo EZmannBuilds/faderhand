@@ -34,6 +34,8 @@ GROUPS = {
                                    "fire_clip", "duplicate_to_arrangement", "record_track_audio", "record_tracks_audio",
                                    "export_audio"],
     "MIDI notes": ["get_clip_notes", "set_note_expression"],
+    "Groove and quantize": ["quantize_notes", "get_groove_pool", "list_grooves", "load_groove", "set_groove",
+                            "set_groove_amount", "set_clip_groove"],
     "Arrangement editing": ["list_arrangement_clips", "move_arrangement_clip", "copy_arrangement_clip",
                             "trim_arrangement_clip", "split_arrangement_clip", "create_arrangement_midi_clip",
                             "delete_arrangement_clip", "cut_arrangement_range"],

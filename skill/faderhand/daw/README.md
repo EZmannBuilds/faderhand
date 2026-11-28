@@ -135,3 +135,32 @@ set_note_expression(track="Drums", slot=0, pitch=42, every=0.5, offset=0.25, hum
 - `dry_run=True` shows every note's before and after without writing. Use it before a broad selection.
 - Velocity changes the sound only if the instrument responds to it. Check its velocity sensitivity
   (`get_device_parameters`), then render and listen. A changed number is not a heard accent.
+
+## Quantize, swing and grooves
+
+`quantize_notes` moves existing notes toward a grid; the groove tools put one of Live's grooves on a clip. Both only
+change timing (a groove can also change velocity): render and listen before calling the feel right.
+
+**Tighten the hats to 16ths, half way, then swing them**
+```
+quantize_notes(track="Drums", slot=0, pitch=42, grid="1/16", strength=50, dry_run=True)
+quantize_notes(track="Drums", slot=0, pitch=42, grid="1/16", strength=50)
+quantize_notes(track="Drums", slot=0, pitch=42, grid="1/16", swing=62)
+```
+
+**Put an MPC swing on a clip**
+```
+list_grooves(search="mpc 16")
+load_groove(name="Swing MPC 3000 16ths 57", track="Drums", slot=0)
+set_groove_amount(amount=100)                    # the pool's Global Amount: at 0, no groove does anything
+get_groove_pool(clips=True)                      # which clips use which groove
+```
+
+- `swing` is the MPC-style percentage: 50 is straight, about 66 is a triplet feel. Live's "Swing 16ths 66" groove
+  moved off 16ths 41.7 ms late at 120 BPM: a full triplet.
+- A swung or quantized note that now runs into the next note of its pitch is shortened, as Live does. The reply
+  lists it under `shortened`. Notes that would land on the same spot are refused with nothing written.
+- A groove changes how a clip plays, not its notes, and every clip using it follows `set_groove`. Live's API can't
+  remove a clip's groove. To switch one off, set its amounts to 0 or turn the Global Amount down.
+- New clips can come with a groove already assigned (seen in a Set whose pool had one). Check `get_groove_pool(clips=True)`
+  before relying on straight timing.

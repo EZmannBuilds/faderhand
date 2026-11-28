@@ -36,7 +36,7 @@ CLASSES = {
     "inspect_device_sidechain": READ, "get_clip": READ, "find_parameter": READ, "record_tracks_audio_status": READ, "list_arrangement_clips": READ,
     "record_arrangement_status": READ, "record_track_audio_status": READ, "capture_start": READ,
     "capture_result": READ, "show_clip": READ, "show_devices": READ, "show_view": READ,   # view only: what's on screen
-    "get_clip_notes": READ,
+    "get_clip_notes": READ, "get_groove_pool": READ, "list_grooves": READ,
     # transport: playback control that doesn't edit the Set (fire_clip is checked separately: launching an empty slot
     # on an armed track would record, so that case is WRITE)
     "transport": TRANSPORT, "fire_clip": TRANSPORT, "back_to_arrangement": TRANSPORT,
@@ -54,6 +54,8 @@ CLASSES = {
     "copy_arrangement_clip": WRITE, "move_arrangement_clip": WRITE, "trim_arrangement_clip": WRITE,
     "split_arrangement_clip": WRITE, "create_arrangement_midi_clip": WRITE, "record_track_audio": WRITE, "record_tracks_audio": WRITE, "set_parameter_by_name": WRITE, "cut_arrangement_range": WRITE,
     "set_arm": WRITE, "set_song_time": WRITE, "set_note_expression": WRITE,
+    "quantize_notes": WRITE, "load_groove": WRITE, "set_groove": WRITE, "set_groove_amount": WRITE,
+    "set_clip_groove": WRITE,
 }
 DELETES = {"delete_track", "delete_device", "delete_arrangement_clip", "cut_arrangement_range"}
 

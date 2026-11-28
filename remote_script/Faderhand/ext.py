@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 import random
 
-EXT_VERSION = "0.5.0"
+EXT_VERSION = "0.6.0"
 
 
 class ToolError(Exception):
@@ -19,7 +19,9 @@ class ToolError(Exception):
 def _resolve(cs, path):
     """'song', 'song.view', 'app', 'browser', 'track:N' / 'return:A' / 'master' / a name, then '/'-separated steps:
     'slot:S' (clip slot), 'clip:S' (session clip), 'aclip:I' (arrangement clip I), 'device:D', 'chain:C',
-    'param:P' (index or name), 'mixer', 'envelope:P' (session clip envelope for device param P, via clip)."""
+    'param:P' (index or name), 'mixer', 'envelope:P' (session clip envelope for device param P, via clip),
+    'attr:NAME' (any attribute), 'item:N' (element N of a list, e.g. song/attr:groove_pool/attr:grooves/item:0),
+    'child:NAME' (a browser item's child by name, e.g. browser/attr:packs/child:Core Library)."""
     parts = [p for p in str(path).split("/") if p]
     head = parts.pop(0) if parts else "song"
     if head == "song":
@@ -54,6 +56,16 @@ def _resolve(cs, path):
             obj = obj.mixer_device
         elif key == "attr":
             obj = getattr(obj, arg)
+        elif key == "item":
+            seq = list(obj)
+            if not 0 <= int(arg) < len(seq):
+                raise ToolError("item %s out of range (%d)" % (arg, len(seq)))
+            obj = seq[int(arg)]
+        elif key == "child":
+            match = [c for c in obj.children if c.name == arg]
+            if not match:
+                raise ToolError("no child %r; children: %s" % (arg, [c.name for c in obj.children][:60]))
+            obj = match[0]
         else:
             raise ToolError("unknown path step %r" % step)
     return obj
@@ -1594,3 +1606,357 @@ def cmd_set_note_expression(cs, track, slot=None, arrangement_index=None, ids=No
                notes=[dict(p, after=dict((k, back[p["id"]][k]) for k in p["after"])) for p in todo[:lim]],
                truncated=len(todo) > lim)
     return res
+
+
+# ------------------------------------------------------------------------------------- quantize
+# Quantize moves notes toward a grid through the same note API as set_note_expression (apply_note_modifications,
+# matched by note_id), so it takes the same note selection, any grid, a strength and MPC-style swing, and every
+# moved note is read back. Live's own Clip.quantize has fixed grids and no selection.
+_NOTE_VALUES = {"1/1": 4.0, "1/2": 2.0, "1/4": 1.0, "1/8": 0.5, "1/16": 0.25, "1/32": 0.125, "1/2t": 4.0 / 3,
+                "1/4t": 2.0 / 3, "1/8t": 1.0 / 3, "1/16t": 1.0 / 6, "1/32t": 1.0 / 12}
+
+
+def _grid_beats(cs, grid):
+    """A grid as a note value ("1/16", "1/8T") or in beats (0.25, "0.25b")."""
+    if isinstance(grid, str) and grid.strip().lower() in _NOTE_VALUES:
+        return _NOTE_VALUES[grid.strip().lower()]
+    if isinstance(grid, str) and "/" in grid:
+        raise ToolError("grid %r: use a note value (%s) or beats (0.25)" % (grid, ", ".join(sorted(_NOTE_VALUES))))
+    return _beats(cs, grid)
+
+
+def _swung(k, grid, swing):
+    """Where grid step k lands with swing (percent; 50 = straight, about 66 = triplet feel): every second step moves
+    later, to `swing` percent of its pair of steps."""
+    pair = k // 2
+    if k % 2 == 0:
+        return pair * 2.0 * grid
+    return pair * 2.0 * grid + 2.0 * grid * swing / 100.0
+
+
+def _nearest_step(t, grid, swing):
+    k0 = int(math.floor(t / grid))
+    best = None
+    for k in range(k0 - 1, k0 + 3):
+        p = _swung(k, grid, swing)
+        if best is None or abs(p - t) < abs(best - t) - 1e-12:
+            best = p
+    return best
+
+
+_SAME_SPOT = 1e-4     # beats: Live stores note times in single precision, so "the same start" needs a tolerance
+
+
+def _collisions(rows):
+    """Pure. rows (id, pitch, start): the pairs of one pitch that start at the same spot."""
+    out = []
+    srt = sorted(rows, key=lambda r: (r[1], r[2]))
+    for a, b in zip(srt, srt[1:]):
+        if a[1] == b[1] and abs(a[2] - b[2]) < _SAME_SPOT:
+            out.append({"pitch": a[1], "start": a[2], "ids": [a[0], b[0]]})
+    return out
+
+
+def _settle(plan, notes):
+    """Pure. Live keeps notes of one pitch from overlapping: a note that would run past the start of the next note of
+    its pitch is shortened to end there (measured 2026-11-27: a swung 0.2-beat hat became 0.17). Returns the plan
+    with those trims predicted, including notes outside the selection that a moved note now cuts short."""
+    planned = dict((p["id"], p) for p in plan)
+    final = []
+    for n in notes:
+        p = planned.get(n["id"])
+        st, du = (p["after"]["start"], p["after"]["duration"]) if p else (n["start"], n["duration"])
+        final.append((n["pitch"], st, du, n))
+    final.sort(key=lambda r: (r[0], r[1]))
+    extra = []
+    for a, b in zip(final, final[1:]):
+        if a[0] != b[0] or a[1] + a[2] <= b[1] + 1e-6:
+            continue
+        d = round(b[1] - a[1], 9)
+        n = a[3]
+        p = planned.get(n["id"])
+        if p is not None:
+            p["after"]["duration"] = d
+            p["trimmed"] = True
+            p["changed"] = True
+        else:
+            extra.append({"id": n["id"], "pitch": n["pitch"], "before": {"start": n["start"], "duration": n["duration"]},
+                          "after": {"start": n["start"], "duration": d}, "moved": 0.0, "changed": True,
+                          "trimmed": True, "selected": False})
+    return plan + extra
+
+
+def _plan_quantize(sel, grid, strength=100, swing=50, ends=False):
+    """Pure. For each selected note: its start (and with ends=True its end) moved toward the nearest grid step by
+    `strength` percent. Without ends the length is kept. Returns (plan, report); report["collisions"] lists pairs of
+    one pitch that would land on the same start, which Live would merge (the command then writes nothing)."""
+    grid = _check_range("grid", grid, 1.0 / 64, 16)
+    strength = _check_range("strength", strength, 0, 100)
+    swing = _check_range("swing", swing, 50, 75)
+    plan, err_before, err_after = [], [], []
+    for n in sel:
+        s0, d0 = n["start"], n["duration"]
+        t0 = _nearest_step(s0, grid, swing)
+        s1 = round(s0 + (t0 - s0) * strength / 100.0, 9)
+        if ends:
+            e0 = s0 + d0
+            e1 = round(e0 + (_nearest_step(e0, grid, swing) - e0) * strength / 100.0, 9)
+            d1 = round(e1 - s1, 9) if e1 > s1 + 1e-6 else d0     # an end can't reach its start: keep the length
+        else:
+            d1 = d0
+        err_before.append(abs(s0 - t0))
+        err_after.append(abs(s1 - _nearest_step(s1, grid, swing)))
+        after = {"start": s1, "duration": d1}
+        changed = abs(s1 - s0) > 1e-9 or abs(d1 - d0) > 1e-9
+        plan.append({"id": n["id"], "pitch": n["pitch"], "before": {"start": s0, "duration": d0}, "after": after,
+                     "moved": round(s1 - s0, 6), "changed": changed})
+    report = {"collisions": _collisions([(p["id"], p["pitch"], p["after"]["start"]) for p in plan]),"grid": grid, "strength": strength, "swing": swing, "ends": bool(ends),
+              "mean_off_grid_before": round(sum(err_before) / len(err_before), 6) if plan else 0.0,
+              "mean_off_grid_after": round(sum(err_after) / len(err_after), 6) if plan else 0.0,
+              "largest_move": round(max([abs(p["moved"]) for p in plan] or [0.0]), 6)}
+    return plan, report
+
+
+def cmd_quantize_notes(cs, track, slot=None, arrangement_index=None, grid=0.25, strength=100, swing=50, ends=False,
+                       ids=None, pitch=None, pitch_range=None, start=None, end=None, every=None, offset=0,
+                       tolerance=_GRID_TOL, dry_run=False, limit=500):
+    """Move a MIDI clip's notes toward a grid (beats: 0.25 = 16ths, 1/3 = 8th-note triplets) by `strength` percent,
+    with optional swing (50 = straight, about 66 = triplet feel) and note ends. Notes are chosen with the
+    get_clip_notes filters or ids. Pitch, velocity and the other notes don't change. Every moved note is read
+    back; dry_run=True returns the plan and writes nothing."""
+    t, c = _any_clip(cs, track, slot, arrangement_index)
+    s, e, ev, off = _note_filters(cs, start, end, every, offset)
+    live = _live_notes(c)
+    notes = [_note_dict(n) for n in live]
+    sel = _select_notes(notes, ids, pitch, pitch_range, s, e, ev, off, tolerance)
+    if not sel:
+        raise ToolError("no notes matched in %r (%d notes in the clip); nothing written" % (c.name, len(notes)))
+    plan, report = _plan_quantize(sel, _grid_beats(cs, grid), strength, swing, ends)
+    picked = set(p["id"] for p in plan)
+    rows = [(p["id"], p["pitch"], p["after"]["start"]) for p in plan]
+    rows += [(n["id"], n["pitch"], n["start"]) for n in notes if n["id"] not in picked]
+    hit = [c for c in _collisions(rows) if not set(c["ids"]) <= picked]   # landing on a note that isn't selected
+    clashes = report["collisions"] + hit
+    report["collisions"] = clashes
+    if clashes and not dry_run:
+        raise ToolError("%d pairs of notes would land on the same spot (same pitch, same start)%s and Live would "
+                        "merge them; nothing written. Use a finer grid, a lower strength or a narrower selection "
+                        "(dry_run=True shows the plan): %s" % (len(clashes), ", some outside the selection" if hit
+                                                               else "", clashes[:10]))
+    if not clashes:
+        plan = _settle(plan, notes)
+    todo = [p for p in plan if p["changed"]]
+    lim = max(0, int(limit))
+    res = dict(report, track=cs._ref(t), clip=c.name, matched=len(sel), changed=len(todo),
+               unchanged=len(plan) - len(todo), dry_run=bool(dry_run),
+               shortened=[p["id"] for p in plan if p.get("trimmed")],
+               shortened_outside_selection=[p["id"] for p in plan if p.get("selected") is False])
+    if dry_run or not todo:
+        res.update(written=False, notes=plan[:lim], truncated=len(plan) > lim)
+        return res
+    by_id = dict((int(n.note_id), n) for n in live)
+    for p in todo:
+        n = by_id[p["id"]]
+        n.start_time = p["after"]["start"]
+        n.duration = p["after"]["duration"]
+    c.apply_note_modifications(live)
+    back = dict((d["id"], d) for d in (_note_dict(n) for n in _live_notes(c)))
+    bad = []
+    for p in todo:
+        d = back.get(p["id"])
+        if d is None:
+            bad.append({"id": p["id"], "problem": "the note is gone"})
+        elif abs(d["start"] - p["after"]["start"]) > 1e-4 or abs(d["duration"] - p["after"]["duration"]) > 1e-4 \
+                or d["pitch"] != p["pitch"]:
+            bad.append({"id": p["id"], "wanted": p["after"], "read_back": {"start": d["start"],
+                                                                         "duration": d["duration"], "pitch": d["pitch"]}})
+    if len(back) != len(notes):
+        bad.append({"problem": "the clip had %d notes and now has %d" % (len(notes), len(back))})
+    if bad:
+        raise ToolError("written, but %d notes read back different: %s" % (len(bad), bad[:20]))
+    res.update(written=True, read_back="every moved note matches",
+               notes=[dict(p, after={"start": back[p["id"]]["start"], "duration": back[p["id"]]["duration"]})
+                      for p in todo[:lim]], truncated=len(todo) > lim)
+    return res
+
+
+# ------------------------------------------------------------------------------------- groove pool
+# Song.groove_pool.grooves (Live 11+): each Groove has name, base, and timing / random / velocity / quantize amounts
+# in percent (measured 2026-11-27, Live 12.4.16). A groove gets into the pool by loading its .agr file from the
+# browser (it lands in the pool; no clip changes); Clip.groove assigns one to a clip; Song.groove_amount is the
+# pool's Global Amount.
+_GROOVE_BASES = ("1/4", "1/8", "1/8T", "1/16", "1/16T", "1/32")    # Groove.base index; measured: 1 = 8ths, 3 = 16ths
+_GROOVE_RANGES = {"timing": (0.0, 100.0), "random": (0.0, 100.0), "velocity": (-100.0, 100.0),
+                  "quantize": (0.0, 100.0)}
+_GROOVE_ATTRS = {"timing": "timing_amount", "random": "random_amount", "velocity": "velocity_amount",
+                 "quantize": "quantization_amount"}
+_GROOVE_ROOTS = (("Core Library", ("packs", "Core Library", "Grooves")), ("User Library", ("user_library", "Grooves")))
+
+
+def _pool(cs):
+    return list(cs._song.groove_pool.grooves)
+
+
+def _groove_out(i, g):
+    b = int(g.base)
+    out = {"index": i, "name": g.name, "base": _GROOVE_BASES[b] if 0 <= b < len(_GROOVE_BASES) else b}
+    for k, a in _GROOVE_ATTRS.items():
+        out[k] = float(getattr(g, a))
+    return out
+
+
+def _groove_index(pool, g):
+    for i, x in enumerate(pool):
+        if x == g:
+            return i
+    return None
+
+
+def _groove(cs, ref):
+    pool = _pool(cs)
+    if not pool:
+        raise ToolError("the groove pool is empty: load a groove first (list_grooves, load_groove)")
+    if isinstance(ref, bool):
+        raise ToolError("groove is an index or a name")
+    if isinstance(ref, int) or (isinstance(ref, str) and ref.strip().isdigit()):
+        i = int(ref)
+        if not 0 <= i < len(pool):
+            raise ToolError("groove %d out of range: the pool has %d" % (i, len(pool)))
+        return i, pool[i]
+    key = str(ref).strip().lower()
+    hits = [(i, g) for i, g in enumerate(pool) if g.name.lower() == key]
+    if len(hits) != 1:
+        raise ToolError("%d grooves called %r in the pool; use its index: %s"
+                        % (len(hits), ref, [_groove_out(i, g) for i, g in enumerate(pool)]))
+    return hits[0]
+
+
+def cmd_get_groove_pool(cs, clips=False):
+    """The groove pool: every groove's index, name, base and amounts (percent), and the Global Amount. clips=True
+    also lists every clip that has a groove assigned (Session and Arrangement)."""
+    pool = _pool(cs)
+    out = {"global_amount": float(cs._song.groove_amount), "count": len(pool),
+           "grooves": [_groove_out(i, g) for i, g in enumerate(pool)]}
+    if clips:
+        uses = []
+        for t in cs._song.tracks:
+            spots = [({"slot": s}, sl.clip) for s, sl in enumerate(t.clip_slots) if sl.clip is not None]
+            spots += [({"arrangement_index": i}, c) for i, c in enumerate(t.arrangement_clips)]
+            for where, c in spots:
+                g = getattr(c, "groove", None)
+                if g is not None:
+                    uses.append(dict(where, track=cs._ref(t), clip=c.name, groove=_groove_index(pool, g),
+                                     groove_name=g.name))
+        out["clips"] = uses
+    return out
+
+
+def cmd_set_groove(cs, groove, timing=None, random=None, velocity=None, quantize=None, base=None):
+    """Change one pool groove (by index or name): timing, random, quantize 0-100 and velocity -100..100 (percent),
+    base one of 1/4, 1/8, 1/8T, 1/16, 1/16T, 1/32. Every clip using the groove follows. Reads it back."""
+    i, g = _groove(cs, groove)
+    before = _groove_out(i, g)
+    want = {}
+    for k, v in (("timing", timing), ("random", random), ("velocity", velocity), ("quantize", quantize)):
+        if v is not None:
+            want[k] = _check_range(k, v, *_GROOVE_RANGES[k])
+    b = None
+    if base is not None:
+        if str(base) not in _GROOVE_BASES:
+            raise ToolError("base is one of %s, not %r" % (list(_GROOVE_BASES), base))
+        b = _GROOVE_BASES.index(str(base))
+    if not want and b is None:
+        raise ToolError("nothing to change: give timing, random, velocity, quantize or base")
+    for k, v in want.items():
+        setattr(g, _GROOVE_ATTRS[k], v)
+    if b is not None:
+        g.base = b
+    after = _groove_out(i, g)
+    bad = [k for k, v in want.items() if abs(after[k] - v) > 1e-3] + (["base"] if b is not None and after["base"] != base else [])
+    if bad:
+        raise ToolError("written, but %s read back different: %s" % (bad, after))
+    return {"before": before, "after": after}
+
+
+def cmd_set_groove_amount(cs, amount):
+    """The groove pool's Global Amount, in percent (0-131, as Live's dial). 0 turns every groove off."""
+    a = _check_range("amount", amount, 0, 131.25)
+    before = float(cs._song.groove_amount)
+    cs._song.groove_amount = a / 100.0
+    got = float(cs._song.groove_amount)
+    if abs(got - a / 100.0) > 1e-4:
+        raise ToolError("written, but the Global Amount reads back %g, not %g" % (got * 100.0, a))
+    return {"before": round(before * 100.0, 3), "after": round(got * 100.0, 3)}
+
+
+def cmd_set_clip_groove(cs, track, groove, slot=None, arrangement_index=None):
+    """Assign a pool groove (index or name) to a clip. Reads it back. Live's API can't remove a clip's groove (the
+    setter refuses None and there is no deleter, measured on 12.4.16): to switch a groove's effect off, set its
+    amounts to 0 with set_groove, or turn the Global Amount down with set_groove_amount."""
+    t, c = _any_clip(cs, track, slot, arrangement_index)
+    pool = _pool(cs)
+    old = getattr(c, "groove", None)
+    before = None if old is None else {"index": _groove_index(pool, old), "name": old.name}
+    i, g = _groove(cs, groove)
+    c.groove = g
+    now = getattr(c, "groove", None)
+    if now is None or now != g:
+        raise ToolError("written, but the clip's groove reads back %r" % (None if now is None else now.name))
+    return {"track": cs._ref(t), "clip": c.name, "before": before, "after": {"index": i, "name": g.name}}
+
+
+def _groove_items(cs):
+    """Every loadable groove file in the browser's Core Library and User Library Grooves folders."""
+    b = cs.application().browser
+    out = []
+    for source, path in _GROOVE_ROOTS:
+        node = getattr(b, path[0], None)
+        for name in path[1:]:
+            node = None if node is None else next((c for c in node.children if c.name == name), None)
+        if node is None:
+            continue
+        stack = [(node, ())]
+        while stack:
+            item, folder = stack.pop()
+            for ch in item.children:
+                if ch.is_loadable and ch.name.lower().endswith(".agr"):
+                    out.append((source, "/".join(folder), ch))
+                elif ch.is_folder and len(folder) < 4:
+                    stack.append((ch, folder + (ch.name,)))
+    return out
+
+
+def cmd_list_grooves(cs, search=None, limit=300):
+    """Groove files you can load: Live's Core Library grooves and your User Library's. search matches the name or
+    folder; every word must appear, in any order (e.g. "mpc 16", "swing 8ths", "style funk"). Each has a
+    name and folder for load_groove."""
+    words = [] if search is None else str(search).lower().split()
+    rows = []
+    for source, folder, item in _groove_items(cs):
+        name = item.name[:-4]
+        hay = ("%s %s %s" % (source, folder.replace("/", " "), name)).lower()
+        if any(w not in hay for w in words):
+            continue
+        rows.append({"name": name, "folder": folder, "source": source})
+    rows.sort(key=lambda r: (r["source"], r["folder"], r["name"]))
+    lim = max(0, int(limit))
+    return {"count": len(rows), "truncated": len(rows) > lim, "grooves": rows[:lim]}
+
+
+def cmd_load_groove(cs, name, folder=None):
+    """Start loading a groove file into the pool by name (as list_grooves gives it; folder narrows a name found in
+    several places). Asynchronous: the pool grows on Live's next tick (the MCP tool waits for it). No clip
+    changes."""
+    key = str(name).strip().lower()
+    if key.endswith(".agr"):
+        key = key[:-4]
+    hits = [(s, f, it) for s, f, it in _groove_items(cs) if it.name[:-4].lower() == key
+            and (folder is None or f.lower() == str(folder).strip().lower())]
+    if not hits:
+        raise ToolError("no groove called %r%s: see list_grooves" % (name, "" if folder is None else " in %s" % folder))
+    if len(hits) > 1:
+        raise ToolError("%d grooves called %r: give folder, one of %s" % (len(hits), name, [f for _, f, _ in hits]))
+    source, f, item = hits[0]
+    before = len(_pool(cs))
+    cs.application().browser.load_item(item)
+    return {"loading": item.name[:-4], "folder": f, "source": source, "pool_before": before}

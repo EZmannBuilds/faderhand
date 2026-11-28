@@ -160,6 +160,12 @@ The command names are those of the Remote Script (`info` lists them). The MCP to
   by pitch, time range and grid) and `set_note_expression` (velocity value, pattern, ramp, scale, offset, seeded
   humanize; chance, velocity range, release velocity, mute; read back; `dry_run`). Existing notes only: nothing is
   added, removed or moved.
+- **Groove and quantize:** `quantize_notes` (grid as "1/16", "1/8T" or beats; strength; swing 50-75; ends; the same
+  note filters; collisions refused; notes that now run into the next of their pitch are shortened as Live does and
+  listed), `list_grooves` (search by words), `load_groove` (into the pool; optionally onto a clip), `get_groove_pool`,
+  `set_groove`, `set_groove_amount`, `set_clip_groove`. A clip's groove can't be removed through the API.
+- `probe` paths can walk lists and the browser: `song/attr:groove_pool/attr:grooves/item:0`,
+  `browser/attr:packs/child:Core Library/child:Grooves`.
 - **Offline tools:**
   - `tools/audio_check.py` (duration, rate, peak, true peak, LUFS, clipping, silence, loop seam);
   - `tools/wav_reverse.py`;
