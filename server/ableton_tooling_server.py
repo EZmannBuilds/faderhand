@@ -863,6 +863,48 @@ def create_arrangement_midi_clip(track: Ref, at, length, notes: Optional[list] =
     return out(call("create_arrangement_midi_clip", track=track, at=at, length=length, notes=notes, name=name))
 
 
+# ============================================================================================ MIDI notes
+@mcp.tool()
+@guarded
+def get_clip_notes(track: Ref, slot: Optional[int] = None, arrangement_index: Optional[int] = None,
+                   pitch: Optional[Union[int, list]] = None, pitch_range: Optional[list] = None, start=None,
+                   end=None, every=None, offset=0, tolerance: float = 0.02, limit: int = 2000) -> str:
+    """Read a MIDI clip's notes (Session slot, or Arrangement index) with their ids and expression, in clip beats:
+    velocity 1-127, probability 0-1 (Live's Chance), velocity_deviation -127..127 (Live's Velocity Range),
+    release_velocity, mute. Filters, all optional and combined: pitch (one or a list), pitch_range [low, high],
+    start/end (clip positions, [start, end)), every/offset in beats for notes on a grid (every=0.5, offset=0.25: the
+    off-beat 16ths; tolerance is how far off the grid still counts). summary gives the velocity range and the mean
+    velocity at each 16th of the bar, to check accents."""
+    return out(call("get_clip_notes", track=track, slot=slot, arrangement_index=arrangement_index, pitch=pitch,
+                    pitch_range=pitch_range, start=start, end=end, every=every, offset=offset, tolerance=tolerance,
+                    limit=limit))
+
+
+@mcp.tool()
+@guarded
+def set_note_expression(track: Ref, slot: Optional[int] = None, arrangement_index: Optional[int] = None,
+                        ids: Optional[list] = None, pitch: Optional[Union[int, list]] = None,
+                        pitch_range: Optional[list] = None, start=None, end=None, every=None, offset=0,
+                        tolerance: float = 0.02, velocity: Optional[float] = None,
+                        velocity_pattern: Optional[list] = None, velocity_ramp: Optional[list] = None,
+                        velocity_scale: Optional[float] = None, velocity_add: Optional[float] = None,
+                        humanize: Optional[float] = None, seed: int = 0, probability: Optional[float] = None,
+                        velocity_deviation: Optional[float] = None, release_velocity: Optional[float] = None,
+                        mute: Optional[bool] = None, dry_run: bool = False) -> str:
+    """Change the velocity and expression of a MIDI clip's existing notes; nothing is added, removed or moved.
+    Choose notes with the get_clip_notes filters, or ids. Velocity: one base (velocity; velocity_pattern, cycled once
+    per onset in time order, e.g. [110, 70, 85] for accents; or velocity_ramp [from, to] across the selection), then
+    velocity_scale, then velocity_add, then humanize (seeded +/- per note, repeatable), kept in 1-127. Also
+    probability, velocity_deviation, release_velocity, mute. Every changed note is read back. dry_run=True shows the
+    plan and writes nothing; no matching note is an error."""
+    return out(call("set_note_expression", track=track, slot=slot, arrangement_index=arrangement_index, ids=ids,
+                    pitch=pitch, pitch_range=pitch_range, start=start, end=end, every=every, offset=offset,
+                    tolerance=tolerance, velocity=velocity, velocity_pattern=velocity_pattern,
+                    velocity_ramp=velocity_ramp, velocity_scale=velocity_scale, velocity_add=velocity_add,
+                    humanize=humanize, seed=seed, probability=probability, velocity_deviation=velocity_deviation,
+                    release_velocity=release_velocity, mute=mute, dry_run=dry_run))
+
+
 # ============================================================================================ write permission
 @mcp.tool()
 @guarded

@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 83 tools.
+then call its 85 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-83 tools in 12 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+85 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
@@ -120,12 +120,13 @@ conventions: [docs/TOOLS.md](docs/TOOLS.md).
 | Tracks and mixer | 6 | `list_tracks`, `create_track`, `set_mixer` |
 | Return tracks and sends | 12 | `create_return_track`, `load_effect_on_return_track`, `set_track_send` |
 | Routing and audio buses | 10 | `create_audio_bus`, `route_multiple_tracks`, `validate_routing` |
-| Devices and parameters | 10 | `load_effect`, `set_device_parameter`, `snapshot_device` |
+| Devices and parameters | 12 | `load_effect`, `set_device_parameter`, `find_parameter` |
 | Racks | 5 | `create_effect_rack`, `add_rack_chain`, `set_rack_macros` |
 | Sidechain | 2 | `inspect_device_sidechain`, `set_sidechain` |
 | Automation | 11 | `set_automation_points`, `get_automation`, `record_arrangement_automation` |
-| Clips, audio and recording | 8 | `make_test_clip`, `create_audio_clip`, `record_track_audio` |
-| Arrangement editing | 6 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `move_arrangement_clip` |
+| Clips, audio and recording | 9 | `make_test_clip`, `create_audio_clip`, `record_tracks_audio` |
+| MIDI notes | 2 | `get_clip_notes`, `set_note_expression` |
+| Arrangement editing | 7 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
 | Transport, time and metering | 4 | `transport`, `set_song_time`, `measure_levels` |
 
 ## Examples

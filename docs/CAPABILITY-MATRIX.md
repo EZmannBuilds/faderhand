@@ -92,7 +92,8 @@ automation), OFF (offline file processing).
 | move, copy, trim, split Arrangement clips | Working | LOM | `tests/test_arrangement_edit.py` proves each by null test on deterministic audio: split −215.6 dB, move −45.5 dB, head trim −39 dB (Live's automatic clip-edge fade). There's no move or resize API: a move is a verified copy plus delete through a temporary spot; an unlooped clip's span is its loop_start/loop_end |
 | clip fades | Unsupported | OFF / UI | not in the LOM (Live adds a short automatic edge fade); render fades offline, or draw them in the UI |
 | take lanes / comping | Untested | LOM | `Track.create_take_lane`, `take_lanes` exist on 12.4.16 |
-| groove, MIDI velocity / expression edits | Missing | LOM | `Clip.quantize`, note APIs exist (AbletonMCP edits notes) |
+| MIDI velocity / expression edits: velocity, chance, velocity range, release velocity, mute | Working | LOM | `get_clip_notes`, `set_note_expression` (`get_all_notes_extended`, `apply_note_modifications`). `tests/test_note_expression.py`: 18/18 on Live 12.4.16, in a Session and an Arrangement clip; nothing moved. Audible: a 3+3+2 hat pattern through Operator (Osc-A Lev < Vel 100%), resampled. Flat velocity 100 gave every 16th at -16.26 dBFS; the pattern gave -14.61 (110), -15.42 (105), -21.25 (75), -22.44 (70), r = 0.9997 with the velocities. Offline: `tests/offline/test_note_expression.py` |
+| groove, quantize | Missing | LOM | `Clip.quantize` and the groove pool exist |
 
 ## A/B (priority 8)
 

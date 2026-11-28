@@ -32,6 +32,7 @@ GROUPS = {
                    "param_state", "re_enable_automation", "back_to_arrangement"],
     "Clips, audio and recording": ["get_clip", "set_clip", "warp_marker", "create_audio_clip", "make_test_clip",
                                    "fire_clip", "duplicate_to_arrangement", "record_track_audio", "record_tracks_audio"],
+    "MIDI notes": ["get_clip_notes", "set_note_expression"],
     "Arrangement editing": ["list_arrangement_clips", "move_arrangement_clip", "copy_arrangement_clip",
                             "trim_arrangement_clip", "split_arrangement_clip", "create_arrangement_midi_clip", "cut_arrangement_range"],
     "Transport, time and metering": ["transport", "set_song_time", "measure_levels", "capture"],

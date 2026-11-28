@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**83 tools.**
+**85 tools.**
 
 ## Connection and inspection
 
@@ -126,6 +126,13 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `duplicate_to_arrangement` | track, slot, at | Copy a session clip into the Arrangement. |
 | `record_track_audio` | dst, source, slot?, bars?, channel?, wait? | Record (resample) a track's output, or "Resampling" for the Main, into a session slot of an audio track for exactly `bars` bars. |
 | `record_tracks_audio` | takes, bars?, wait? | Record several tracks' outputs in ONE real-time pass: takes = [{"dst": audio track, "source": track or "Resampling", "slot": n, "channel": optional}], one take per destination. |
+
+## MIDI notes
+
+| Tool | Arguments | What it does |
+|---|---|---|
+| `get_clip_notes` | track, slot?, arrangement_index?, pitch?, pitch_range?, start?, end?, every?, offset?, tolerance?, limit? | Read a MIDI clip's notes (Session slot, or Arrangement index) with their ids and expression, in clip beats: velocity 1-127, probability 0-1 (Live's Chance), velocity_deviation -127..127 (Live's Velocity Range), release_velocity, mute. |
+| `set_note_expression` | track, slot?, arrangement_index?, ids?, pitch?, pitch_range?, start?, end?, every?, offset?, tolerance?, velocity?, velocity_pattern?, velocity_ramp?, velocity_scale?, velocity_add?, humanize?, seed?, probability?, velocity_deviation?, release_velocity?, mute?, dry_run? | Change the velocity and expression of a MIDI clip's existing notes; nothing is added, removed or moved. |
 
 ## Arrangement editing
 

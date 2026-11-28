@@ -1,8 +1,9 @@
 # Faderhand: tool reference
 
 Server: `faderhand` (formerly `wavread-bridge`, and `ableton-tooling` in older versions of this page; registered with your MCP client; see the README). It talks to the Faderhand Remote Script on 127.0.0.1:9878.
-The `ableton` server (port 9877) keeps clips, notes, browser browsing and composing. Use this server for mixer,
-returns, sends, routing, buses and device chains.
+The `ableton` server (port 9877) keeps adding notes, browser browsing and composing. Use this server for mixer,
+returns, sends, routing, buses, device chains, and for reading notes and editing their velocity and expression
+(`get_clip_notes`, `set_note_expression`).
 
 Tool names in a session: `mcp__faderhand__<tool>`. Call `tooling_info` first: if it fails with "not listening",
 Faderhand isn't loaded in Live (see Setup).
@@ -143,6 +144,10 @@ The command names are those of the Remote Script (`info` lists them). The MCP to
 - **Clips and recording:** `get_clip`, `set_clip`, `warp_marker`, `create_audio_clip`,
   `duplicate_to_arrangement`, `record_track_audio` (resample; also the dialog-free render), `set_arm`,
   `set_song_time`.
+- **MIDI notes:** `get_clip_notes` (notes with ids, velocity, chance, velocity range, release velocity, mute; filters
+  by pitch, time range and grid) and `set_note_expression` (velocity value, pattern, ramp, scale, offset, seeded
+  humanize; chance, velocity range, release velocity, mute; read back; `dry_run`). Existing notes only: nothing is
+  added, removed or moved.
 - **Offline tools:**
   - `tools/audio_check.py` (duration, rate, peak, true peak, LUFS, clipping, silence, loop seam);
   - `tools/wav_reverse.py`;

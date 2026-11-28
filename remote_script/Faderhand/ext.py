@@ -5,7 +5,10 @@
 # Runs on Live's main thread (the core's dispatcher schedules it). Raise ToolError for a clear, expected failure.
 from __future__ import absolute_import, print_function, unicode_literals
 
-EXT_VERSION = "0.3.0"
+import math
+import random
+
+EXT_VERSION = "0.4.0"
 
 
 class ToolError(Exception):
@@ -1329,3 +1332,250 @@ def cmd_record_tracks_audio_status(cs):
     if rec is None:
         raise ToolError("no multi-track recording started")
     return dict(rec)
+
+
+# ------------------------------------------------------------------------------------- MIDI notes: velocity and expression
+# Live 11+ note API: Clip.get_all_notes_extended() returns MidiNote objects that carry a note_id;
+# Clip.apply_note_modifications(notes) writes their changed attributes back, matched by id. These commands read notes
+# and change their expression only: nothing is added, removed, moved or lengthened.
+# Ranges: velocity 1-127, probability 0-1 (Live's Chance), velocity_deviation -127..127 (Live's Velocity Range: the
+# random spread Live adds on each play), release_velocity 0-127.
+_NOTE_RANGES = {"velocity": (1.0, 127.0), "probability": (0.0, 1.0), "velocity_deviation": (-127.0, 127.0),
+                "release_velocity": (0.0, 127.0)}
+_GRID_TOL = 0.02     # beats: how far from the grid a note may start and still count as on it (a 32nd is 0.125)
+_EPS = 1e-6
+
+
+def _note_dict(n):
+    return {"id": int(n.note_id), "pitch": int(n.pitch), "start": float(n.start_time), "duration": float(n.duration),
+            "velocity": float(n.velocity), "mute": bool(n.mute), "probability": float(n.probability),
+            "velocity_deviation": float(n.velocity_deviation), "release_velocity": float(n.release_velocity)}
+
+
+def _live_notes(c):
+    if c.is_audio_clip:
+        raise ToolError("%r is an audio clip: notes are on MIDI clips" % c.name)
+    get_all = getattr(c, "get_all_notes_extended", None)
+    if get_all is not None:
+        return get_all()
+    return c.get_notes_extended(0, 128, -16384.0, 1048576.0)
+
+
+def _as_list(v):
+    return list(v) if isinstance(v, (list, tuple)) else [v]
+
+
+def _select_notes(notes, ids=None, pitch=None, pitch_range=None, start=None, end=None, every=None, offset=0.0,
+                  tolerance=_GRID_TOL):
+    """Pure. The notes (dicts from _note_dict) that pass every filter given, in time order, then pitch. start, end,
+    every and offset are beats already. A note is on the grid when its start is within `tolerance` of
+    offset + k * every."""
+    want = None if ids is None else set(int(i) for i in _as_list(ids))
+    pitches = None if pitch is None else set(int(p) for p in _as_list(pitch))
+    lo = hi = None
+    if pitch_range is not None:
+        if not (isinstance(pitch_range, (list, tuple)) and len(pitch_range) == 2):
+            raise ToolError("pitch_range is [low, high], both inclusive")
+        lo, hi = int(pitch_range[0]), int(pitch_range[1])
+        if lo > hi:
+            raise ToolError("pitch_range low %d is above high %d" % (lo, hi))
+    if every is not None and not float(every) > 0:
+        raise ToolError("every must be more than 0 beats, got %r" % every)
+    if start is not None and end is not None and not start < end:
+        raise ToolError("start %g must be before end %g" % (start, end))
+    tol = float(tolerance)
+    out = []
+    for n in notes:
+        if want is not None and n["id"] not in want:
+            continue
+        if pitches is not None and n["pitch"] not in pitches:
+            continue
+        if lo is not None and not lo <= n["pitch"] <= hi:
+            continue
+        if start is not None and n["start"] < start - _EPS:
+            continue
+        if end is not None and n["start"] >= end - _EPS:
+            continue
+        if every is not None:
+            r = (n["start"] - float(offset)) % float(every)
+            if min(r, float(every) - r) > tol + _EPS:
+                continue
+        out.append(n)
+    out.sort(key=lambda n: (n["start"], n["pitch"]))
+    return out
+
+
+def _check_range(name, v, lo, hi):
+    try:
+        x = float(v)
+    except (TypeError, ValueError):
+        raise ToolError("%s must be a number, got %r" % (name, v))
+    if not lo <= x <= hi:
+        raise ToolError("%s %r is outside %g..%g" % (name, v, lo, hi))
+    return x
+
+
+def _plan_expression(sel, velocity=None, velocity_pattern=None, velocity_ramp=None, velocity_scale=None,
+                     velocity_add=None, humanize=None, seed=0, probability=None, velocity_deviation=None,
+                     release_velocity=None, mute=None):
+    """Pure. For each selected note: the attributes to write, before and after. Returns (plan, clamped).
+
+    Velocity, in this order: one base (velocity; or velocity_pattern, cycled once per onset in time order, so the
+    notes of a chord share a step; or velocity_ramp [from, to], linear from the first onset to the last), then
+    velocity_scale, then velocity_add, then humanize (a seeded random +/- amount per note, so the same call gives
+    the same result). The result is rounded and kept in 1-127; `clamped` counts the notes that had to be kept.
+    probability, velocity_deviation, release_velocity and mute are set as given; a value out of range is an error."""
+    bases = [k for k, v in (("velocity", velocity), ("velocity_pattern", velocity_pattern),
+                            ("velocity_ramp", velocity_ramp)) if v is not None]
+    if len(bases) > 1:
+        raise ToolError("give one of velocity, velocity_pattern or velocity_ramp, not %s" % " and ".join(bases))
+    if velocity is not None:
+        velocity = _check_range("velocity", velocity, 1, 127)
+    if velocity_pattern is not None:
+        if not isinstance(velocity_pattern, (list, tuple)) or not velocity_pattern:
+            raise ToolError("velocity_pattern is a list of velocities, e.g. [110, 70, 85]")
+        velocity_pattern = [_check_range("velocity_pattern value", v, 1, 127) for v in velocity_pattern]
+    if velocity_ramp is not None:
+        if not (isinstance(velocity_ramp, (list, tuple)) and len(velocity_ramp) == 2):
+            raise ToolError("velocity_ramp is [from, to], e.g. [60, 120]")
+        velocity_ramp = [_check_range("velocity_ramp value", v, 1, 127) for v in velocity_ramp]
+    if velocity_scale is not None:
+        velocity_scale = _check_range("velocity_scale", velocity_scale, 0, 16)
+    if velocity_add is not None:
+        velocity_add = _check_range("velocity_add", velocity_add, -127, 127)
+    if humanize is not None:
+        humanize = _check_range("humanize", humanize, 0, 64)
+    other = {}
+    for k, v in (("probability", probability), ("velocity_deviation", velocity_deviation),
+                 ("release_velocity", release_velocity)):
+        if v is not None:
+            other[k] = _check_range(k, v, *_NOTE_RANGES[k])
+    has_vel = bool(bases) or any(v is not None for v in (velocity_scale, velocity_add, humanize))
+    if not has_vel and not other and mute is None:
+        raise ToolError("nothing to change: give a velocity change (velocity, velocity_pattern, velocity_ramp, "
+                        "velocity_scale, velocity_add, humanize), probability, velocity_deviation, release_velocity "
+                        "or mute")
+    onsets = sorted(set(round(n["start"], 6) for n in sel))
+    step = dict((t, i) for i, t in enumerate(onsets))
+    t0, t1 = (onsets[0], onsets[-1]) if onsets else (0.0, 0.0)
+    rng = random.Random(int(seed))
+    plan, clamped = [], 0
+    for n in sel:
+        after = {}
+        if has_vel:
+            at = round(n["start"], 6)
+            v = n["velocity"]
+            if velocity is not None:
+                v = velocity
+            elif velocity_pattern is not None:
+                v = velocity_pattern[step[at] % len(velocity_pattern)]
+            elif velocity_ramp is not None:
+                a, b = velocity_ramp
+                v = a if t1 == t0 else a + (b - a) * (at - t0) / (t1 - t0)
+            if velocity_scale is not None:
+                v *= velocity_scale
+            if velocity_add is not None:
+                v += velocity_add
+            if humanize:
+                v += rng.uniform(-humanize, humanize)
+            r = int(math.floor(v + 0.5))
+            kept = min(127, max(1, r))
+            if kept != r:
+                clamped += 1
+            after["velocity"] = float(kept)
+        after.update(other)
+        if mute is not None:
+            after["mute"] = bool(mute)
+        before = dict((k, n[k]) for k in after)
+        changed = any((before[k] != after[k]) if k == "mute" else abs(before[k] - after[k]) > 1e-9 for k in after)
+        plan.append({"id": n["id"], "pitch": n["pitch"], "start": n["start"], "before": before, "after": after,
+                     "changed": changed})
+    return plan, clamped
+
+
+def _velocity_summary(sel, beats_per_bar, tolerance=_GRID_TOL):
+    """Velocity range and mean, and the mean velocity at each 16th of the bar (notes within `tolerance` of a 16th)."""
+    if not sel:
+        return {"count": 0}
+    vels = [n["velocity"] for n in sel]
+    steps = {}
+    for n in sel:
+        pos = n["start"] % beats_per_bar
+        k = int(math.floor(pos / 0.25 + 0.5))
+        if abs(pos - k * 0.25) <= tolerance + _EPS:
+            steps.setdefault(k % max(1, int(round(beats_per_bar / 0.25))), []).append(n["velocity"])
+    return {"count": len(sel), "velocity_min": min(vels), "velocity_max": max(vels),
+            "velocity_mean": round(sum(vels) / len(vels), 2), "distinct_velocities": len(set(vels)),
+            "muted": sum(1 for n in sel if n["mute"]),
+            "below_full_chance": sum(1 for n in sel if n["probability"] < 1.0 - 1e-9),
+            "velocity_by_16th": [[k + 1, round(sum(v) / len(v), 2), len(v)] for k, v in sorted(steps.items())]}
+
+
+def _note_filters(cs, start, end, every, offset):
+    return (None if start is None else _beats(cs, start), None if end is None else _beats(cs, end),
+            None if every is None else _beats(cs, every), _beats(cs, offset or 0))
+
+
+def cmd_get_clip_notes(cs, track, slot=None, arrangement_index=None, pitch=None, pitch_range=None, start=None,
+                       end=None, every=None, offset=0, tolerance=_GRID_TOL, limit=2000):
+    """A MIDI clip's notes (Session slot or Arrangement index) with their ids and expression, in clip beats, and a
+    velocity summary. Filters, all optional and combined: pitch (one or a list), pitch_range [low, high], start/end
+    (clip positions, [start, end)), every/offset in beats (notes on a grid: every=0.5, offset=0.25 is the off-beat
+    16ths)."""
+    t, c = _any_clip(cs, track, slot, arrangement_index)
+    s, e, ev, off = _note_filters(cs, start, end, every, offset)
+    notes = [_note_dict(n) for n in _live_notes(c)]
+    sel = _select_notes(notes, None, pitch, pitch_range, s, e, ev, off, tolerance)
+    lim = max(0, int(limit))
+    return {"track": cs._ref(t), "clip": c.name, "length": c.length, "total_notes": len(notes), "matched": len(sel),
+            "truncated": len(sel) > lim, "summary": _velocity_summary(sel, _beats_per_bar(cs), float(tolerance)),
+            "notes": sel[:lim]}
+
+
+def cmd_set_note_expression(cs, track, slot=None, arrangement_index=None, ids=None, pitch=None, pitch_range=None,
+                            start=None, end=None, every=None, offset=0, tolerance=_GRID_TOL, velocity=None,
+                            velocity_pattern=None, velocity_ramp=None, velocity_scale=None, velocity_add=None,
+                            humanize=None, seed=0, probability=None, velocity_deviation=None, release_velocity=None,
+                            mute=None, dry_run=False, limit=500):
+    """Change the velocity and expression of a MIDI clip's existing notes, chosen with the same filters as
+    get_clip_notes plus ids. Nothing is added, removed or moved. Every changed note is read back; a note that reads
+    back different is an error that names it. dry_run=True returns the plan and writes nothing. No match is an
+    error, and nothing is written."""
+    t, c = _any_clip(cs, track, slot, arrangement_index)
+    s, e, ev, off = _note_filters(cs, start, end, every, offset)
+    live = _live_notes(c)
+    notes = [_note_dict(n) for n in live]
+    sel = _select_notes(notes, ids, pitch, pitch_range, s, e, ev, off, tolerance)
+    if not sel:
+        raise ToolError("no notes matched in %r (%d notes in the clip); nothing written" % (c.name, len(notes)))
+    plan, clamped = _plan_expression(sel, velocity, velocity_pattern, velocity_ramp, velocity_scale, velocity_add,
+                                     humanize, seed, probability, velocity_deviation, release_velocity, mute)
+    todo = [p for p in plan if p["changed"]]
+    lim = max(0, int(limit))
+    res = {"track": cs._ref(t), "clip": c.name, "matched": len(sel), "changed": len(todo),
+           "unchanged": len(plan) - len(todo), "clamped": clamped, "dry_run": bool(dry_run)}
+    if dry_run or not todo:
+        res.update(written=False, notes=plan[:lim], truncated=len(plan) > lim)
+        return res
+    by_id = dict((int(n.note_id), n) for n in live)
+    for p in todo:
+        n = by_id[p["id"]]
+        for k, v in p["after"].items():
+            setattr(n, k, v)
+    c.apply_note_modifications(live)
+    back = dict((d["id"], d) for d in (_note_dict(n) for n in _live_notes(c)))
+    bad = []
+    for p in todo:
+        d = back.get(p["id"])
+        if d is None:
+            bad.append({"id": p["id"], "problem": "the note is gone"})
+            continue
+        for k, v in p["after"].items():
+            if (d[k] != v) if k == "mute" else abs(d[k] - v) > 1e-3:
+                bad.append({"id": p["id"], "attribute": k, "wanted": v, "read_back": d[k]})
+    if bad:
+        raise ToolError("written, but %d values read back different: %s" % (len(bad), bad[:20]))
+    res.update(written=True, read_back="every changed note matches",
+               notes=[dict(p, after=dict((k, back[p["id"]][k]) for k in p["after"])) for p in todo[:lim]],
+               truncated=len(todo) > lim)
+    return res
