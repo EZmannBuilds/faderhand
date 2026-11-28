@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**85 tools.**
+**86 tools.**
 
 ## Connection and inspection
 
@@ -144,6 +144,7 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 | `trim_arrangement_clip` | track, at?, index?, start?, end? | Trim an Arrangement clip to [start, end) in song time, content kept in place (clip unlooped). |
 | `split_arrangement_clip` | track, split_at, at?, index? | Split an Arrangement clip at a song position into two clips that play exactly as before (null -215 dB). |
 | `create_arrangement_midi_clip` | track, at, length, notes?, name? | A MIDI clip directly in the Arrangement; notes [[pitch, start, length, velocity]] in clip beats. |
+| `delete_arrangement_clip` | track, at?, index? | Delete one Arrangement clip, found by its start `at` (song position, e.g. "9.1.1" or beats) or `index`. |
 | `cut_arrangement_range` | tracks, start, end | Empty [start, end) of the Arrangement on one track or a list of tracks: clips crossing an edge are split there (playing as before), clips inside are deleted, nothing moves. |
 
 ## Transport, time and metering

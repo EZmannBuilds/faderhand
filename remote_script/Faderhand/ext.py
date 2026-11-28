@@ -8,7 +8,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 import math
 import random
 
-EXT_VERSION = "0.4.0"
+EXT_VERSION = "0.5.0"
 
 
 class ToolError(Exception):
@@ -710,12 +710,13 @@ def cmd_duplicate_to_arrangement(cs, track, slot, at):
             "index": cl.index(c)}
 
 
-def cmd_delete_arrangement_clip(cs, track, index):
+def cmd_delete_arrangement_clip(cs, track, index=None, at=None):
+    """Delete one arrangement clip, found by its start `at` (a song position) or its `index`. Disposable sets only."""
     cs._require_scratch()
-    t = cs._track(track)
-    cl = list(t.arrangement_clips)
-    t.delete_clip(cl[int(index)])
-    return {"track": cs._ref(t), "arrangement_clips": len(list(t.arrangement_clips))}
+    t, c = _aclip_ref(cs, track, index, at)
+    gone = {"name": c.name, "start": c.start_time, "end": c.end_time}
+    t.delete_clip(c)
+    return {"track": cs._ref(t), "deleted": gone, "arrangement_clips": len(list(t.arrangement_clips))}
 
 
 _REC = {}
@@ -890,6 +891,18 @@ def cmd_record_track_audio(cs, dst, source, slot=0, bars=2, channel=None, monito
     t = cs._track(dst)
     if t.has_midi_input:
         raise ToolError("%s is a MIDI track: record audio onto an audio track" % t.name)
+    slot = int(slot)
+    if slot < 0:
+        raise ToolError("slot must be 0 or more, got %s" % slot)
+    have = len(list(t.clip_slots))
+    added = max(0, slot + 1 - have)
+    if added > 16:
+        raise ToolError("slot %s is far past %s's %d Session slots (last is %d)" % (slot, t.name, have, have - 1))
+    for _ in range(added):              # just past the last scene: add empty scenes at the end, as Live's
+        cs._song.create_scene(-1)       # Session view does when you record below the last one
+    cslot = list(t.clip_slots)[slot]
+    if cslot.has_clip:
+        raise ToolError("slot %s of %s already holds a clip" % (slot, t.name))
     choices = list(t.available_input_routing_types)
     try:
         src = cs._track(source)
@@ -902,9 +915,6 @@ def cmd_record_track_audio(cs, dst, source, slot=0, bars=2, channel=None, monito
     rec = {"phase": "routing", "done": False, "error": None}
     _RECA["current"] = rec
     length = float(bars) * _beats_per_bar(cs)
-    cslot = list(t.clip_slots)[int(slot)]
-    if cslot.has_clip:
-        raise ToolError("slot %s of %s already holds a clip" % (slot, t.name))
 
     def tick():
         if _RECA.get("current") is not rec or rec["done"]:
@@ -936,6 +946,11 @@ def cmd_record_track_audio(cs, dst, source, slot=0, bars=2, channel=None, monito
                 if rec.get("started") and c is not None and not c.is_recording:
                     t.arm = False
                     rec.update(phase="done", done=True, clip_length=c.length, file=c.file_path)
+                    fp = c.file_path or ""
+                    if "Temp Project" in fp or "/Live Recordings/" in fp:
+                        rec["warning"] = ("recorded outside this Set's project (%s): the Set isn't saved inside a Live "
+                                          "project folder yet. Save it (File > Save Live Set As, or Collect All and "
+                                          "Save) so the take moves with it" % fp)
                     return
                 if rec.get("method", "").startswith("fire()") and c is not None and c.is_recording \
                         and c.length >= length:
@@ -946,7 +961,7 @@ def cmd_record_track_audio(cs, dst, source, slot=0, bars=2, channel=None, monito
             rec.update(phase="done", done=True, error="%s: %s" % (type(e).__name__, e))
 
     cs.schedule_message(1, tick)
-    return {"started": True, "dst": cs._ref(t), "bars": bars, "beats": length}
+    return {"started": True, "dst": cs._ref(t), "slot": slot, "scenes_added": added, "bars": bars, "beats": length}
 
 
 def cmd_record_track_audio_status(cs):

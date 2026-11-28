@@ -32,6 +32,17 @@
     `tests/test_note_expression.py`, 18/18 on Live 12.4.16. Rendered through Operator, a 3+3+2 hat pattern moved
     each 16th's peak with its velocity (-14.6 dBFS at 110 to -22.4 at 70; flat velocity gave one level).
   - The README's group counts are corrected for the commands above.
+- **The installed development line, brought into main** (`EXT_VERSION` 0.5.0, 86 tools). Two commands the
+  installed Remote Script had changed since PR #3 ported the new ones:
+  - **`delete_arrangement_clip`** finds the clip by its start (`at`, a song position) as well as by `index`,
+    refuses an index out of range instead of deleting from the end, and reports what it deleted. It is now an MCP
+    tool too. Like the other deletes, it runs only in a disposable Set.
+  - **`record_track_audio`** checks the slot before it changes any routing. A slot just past the last scene adds
+    empty scenes (up to 16) instead of failing with "list index out of range", and an occupied slot is refused. The
+    status warns when Live wrote the take into a Temp Project because the Set isn't in a project folder yet.
+  - Offline: `tests/offline/test_arrangement_and_recording.py` (fake Live objects). Not yet run in Live from main;
+    the code is the installed copy's, which the score bus session used in Live (23 takes on one track).
+  - With this, every command in the installed copy matches main, so the installed copy can be replaced with main.
 
 ## v0.7.0-alpha.1 (2026-11-21)
 
