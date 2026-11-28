@@ -213,7 +213,9 @@ Planned work: [ROADMAP.md](ROADMAP.md).
 - driving Live through these tools;
 - measuring MIDI against genre ranges taken from a licensed corpus (`midi_check.py`);
 - validating and executing Music Production Blueprints;
-- setting Vital patches with calibrated units.
+- setting Vital patches with calibrated units;
+- a knowledge pack (`skill/faderhand/knowledge/`): lessons learned in a private training lab, as measured findings
+  and sourced conventions. Only the lessons ship. The lab, and the music generator it uses, are not part of Faderhand.
 
 It is installed separately from its companions, the AI Music Studio skill (composition planning) and the WavRead
 skill (analysis reports). The three are meant to be bundled on the WavRead website. See

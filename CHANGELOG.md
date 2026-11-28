@@ -2,16 +2,26 @@
 
 ## Unreleased
 
-Four commands from the development line, now in the Remote Script's extensions (`EXT_VERSION` 0.3.0, loaded with
-`reload_extensions`, no Live restart) and the MCP server (83 tools):
+- **Knowledge pack** (`skill/faderhand/knowledge/`): seven lessons, as `LESSONS.md` and `lessons.json` (schema
+  `faderhand.knowledge/1`). Two are sourced drill conventions; five are measured findings, offline and in Live:
+  - Live's "808 Pure" rings on after note-off, so shorter notes make no low-end space;
+  - gating and ducking the 808 solve different problems;
+  - how deep to duck the 808 under the kick;
+  - thinning hats makes space but costs top end;
+  - printed stems give an exact wetness ground truth.
 
-- **`find_parameter`**: every parameter with a given name on any device of a track, racks and nested racks included,
-  with the address `set_device_parameter` takes.
-- **`set_parameter_by_name`**: sets that parameter wherever it is. An ambiguous name writes nothing and lists every
-  match (narrow it with `prefer` or `device_name`).
-- **`cut_arrangement_range`**: empties a stretch of the Arrangement on one or more tracks, splitting the clips that
-  cross its edges. It deletes, so it runs only in a disposable Set, like the other deletes.
-- **`record_tracks_audio`**: records several tracks' outputs in one real-time pass, one take per destination track.
+  The lessons come from a private training lab that is not part of Faderhand: only cleared lessons ship. No
+  preferences, project decisions, song material, generator output or non-commercial model output. `SKILL.md` routes
+  to the pack. New offline test: `tests/offline/test_knowledge_pack.py`.
+- **Four commands from the development line**, now in the Remote Script's extensions (`EXT_VERSION` 0.3.0, loaded
+  with `reload_extensions`, no Live restart) and the MCP server (83 tools):
+  - **`find_parameter`**: every parameter with a given name on any device of a track, racks and nested racks
+    included, with the address `set_device_parameter` takes.
+  - **`set_parameter_by_name`**: sets that parameter wherever it is. An ambiguous name writes nothing and lists every
+    match (narrow it with `prefer` or `device_name`).
+  - **`cut_arrangement_range`**: empties a stretch of the Arrangement on one or more tracks, splitting the clips that
+    cross its edges. It deletes, so it runs only in a disposable Set, like the other deletes.
+  - **`record_tracks_audio`**: records several tracks' outputs in one real-time pass, one take per destination track.
 
 ## v0.7.0-alpha.1 (2026-11-21)
 

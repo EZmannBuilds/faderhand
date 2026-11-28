@@ -39,5 +39,6 @@ Python 3.10+ is needed. `uv run -q --no-project --with mido …` provides `mido`
 | `tools/TARGETS.md`, `tools/PROVENANCE.md` | Where each range comes from; sources, licences and attribution |
 | `tools/corpus/` | Rebuild the corpus inventory, analysis and statistics (the knowledge pages live in the Studio skill) |
 | `evaluation/` | Ten-task benchmark, fixtures, objective scorer, blind A/B tooling, offline GM renderer, results |
+| `knowledge/` | The knowledge pack: lessons learned by a private training lab (measured findings, sourced conventions), as `LESSONS.md` and `lessons.json`. Only the lessons ship; the lab does not |
 
 The plan for the split, and what comes next: `docs/ARCHITECTURE-AND-DELIVERY-PLAN.md` in this repository.
