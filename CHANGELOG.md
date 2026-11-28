@@ -53,6 +53,18 @@
   same bars sample for sample. One fix over the older copy: a press on Save can be lost, so the exporter presses
   again while the save panel stays open, and cancels both windows if it never closes (the older copy left Live
   behind an open panel). With this, Faderhand's server has every tool the ableton-tooling server had.
+- **Groove and quantize** (roadmap item; `EXT_VERSION` 0.6.0, 94 tools in 14 groups):
+  - **`quantize_notes`** moves notes toward a grid through the note API. It takes a note value or beats, a
+    strength, MPC-style swing and optional ends, with the same note selection as `set_note_expression`.
+    - Notes that would land on the same spot as another of their pitch are refused, with nothing written.
+    - A note that now runs into the next of its pitch is shortened, as Live does, and the reply lists it.
+    - Every moved note is read back.
+  - **The groove pool:** `list_grooves` and `load_groove` (Live's 219 Core Library grooves and the User Library's),
+    `get_groove_pool`, `set_groove` (timing, random, velocity, quantize, base), `set_groove_amount` (the Global
+    Amount, 0-131.25 %) and `set_clip_groove`. Live's API can't remove a clip's groove.
+  - `probe` paths gain `item:N` and `child:NAME` steps, to reach the groove pool and the browser.
+  - Offline: `tests/offline/test_groove.py`. In Live: `tests/test_groove.py`, 13/13 on Live 12.4.16. A render with
+    Swing 16ths 66 at Global Amount 100 moved every off 16th 41.7 ms late and left the on-beat 16ths in place.
 
 ## v0.7.0-alpha.1 (2026-11-21)
 

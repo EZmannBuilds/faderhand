@@ -3,7 +3,7 @@
 Generated from the server's registry by `tools/gen_tool_reference.py`; do not edit by hand.
 `arg?` is optional. Status per feature: `docs/CAPABILITY-MATRIX.md`. Units and conventions: `docs/TOOLS.md`.
 
-**87 tools.**
+**94 tools.**
 
 ## Connection and inspection
 
@@ -134,6 +134,18 @@ Generated from the server's registry by `tools/gen_tool_reference.py`; do not ed
 |---|---|---|
 | `get_clip_notes` | track, slot?, arrangement_index?, pitch?, pitch_range?, start?, end?, every?, offset?, tolerance?, limit? | Read a MIDI clip's notes (Session slot, or Arrangement index) with their ids and expression, in clip beats: velocity 1-127, probability 0-1 (Live's Chance), velocity_deviation -127..127 (Live's Velocity Range), release_velocity, mute. |
 | `set_note_expression` | track, slot?, arrangement_index?, ids?, pitch?, pitch_range?, start?, end?, every?, offset?, tolerance?, velocity?, velocity_pattern?, velocity_ramp?, velocity_scale?, velocity_add?, humanize?, seed?, probability?, velocity_deviation?, release_velocity?, mute?, dry_run? | Change the velocity and expression of a MIDI clip's existing notes; nothing is added, removed or moved. |
+
+## Groove and quantize
+
+| Tool | Arguments | What it does |
+|---|---|---|
+| `quantize_notes` | track, slot?, arrangement_index?, grid?, strength?, swing?, ends?, ids?, pitch?, pitch_range?, start?, end?, every?, offset?, tolerance?, dry_run? | Move a MIDI clip's notes toward a grid: grid as a note value ("1/16", "1/8T") or beats (0.25); strength 0-100 %; swing 50-75 % (50 straight, about 66 triplet feel: every second step moves late); ends=True quantizes note ends too (otherwise lengths are kept). |
+| `get_groove_pool` | clips? | The groove pool: each groove's index, name, base (1/4 ... 1/32) and timing / random / velocity / quantize amounts in percent, and the Global Amount (percent). clips=True also lists every clip with a groove assigned. |
+| `list_grooves` | search?, limit? | Groove files you can load (Live's Core Library grooves and your User Library's), by name and folder. search: every word must appear, in any order (e.g. "mpc 16", "swing 8ths", "style funk"). |
+| `load_groove` | name, folder?, track?, slot?, arrangement_index? | Load a groove file (a name from list_grooves; folder narrows a name found twice) into the groove pool. |
+| `set_groove` | groove, timing?, random?, velocity?, quantize?, base? | Change a pool groove (index or name): timing, random, quantize 0-100 %, velocity -100..100 %, base one of 1/4, 1/8, 1/8T, 1/16, 1/16T, 1/32. |
+| `set_groove_amount` | amount | The groove pool's Global Amount in percent, 0-131.25 as Live's dial; 0 turns every groove off. |
+| `set_clip_groove` | track, groove, slot?, arrangement_index? | Assign a pool groove (index or name) to a clip. |
 
 ## Arrangement editing
 

@@ -946,6 +946,90 @@ def set_note_expression(track: Ref, slot: Optional[int] = None, arrangement_inde
                     release_velocity=release_velocity, mute=mute, dry_run=dry_run))
 
 
+# ============================================================================================ groove and quantize
+@mcp.tool()
+@guarded
+def quantize_notes(track: Ref, slot: Optional[int] = None, arrangement_index: Optional[int] = None, grid="1/16",
+                   strength: float = 100, swing: float = 50, ends: bool = False, ids: Optional[list] = None,
+                   pitch: Optional[Union[int, list]] = None, pitch_range: Optional[list] = None, start=None, end=None,
+                   every=None, offset=0, tolerance: float = 0.02, dry_run: bool = False) -> str:
+    """Move a MIDI clip's notes toward a grid: grid as a note value ("1/16", "1/8T") or beats (0.25); strength
+    0-100 %; swing 50-75 % (50 straight, about 66 triplet feel: every second step moves late); ends=True quantizes
+    note ends too (otherwise lengths are kept). Choose notes with the get_clip_notes filters or ids. Notes that
+    would land on the same spot as another of their pitch are refused (nothing written); a note that now runs into
+    the next of its pitch is shortened as Live does, and listed. Every moved note is read back; dry_run=True shows
+    the plan."""
+    return out(call("quantize_notes", track=track, slot=slot, arrangement_index=arrangement_index, grid=grid,
+                    strength=strength, swing=swing, ends=ends, ids=ids, pitch=pitch, pitch_range=pitch_range,
+                    start=start, end=end, every=every, offset=offset, tolerance=tolerance, dry_run=dry_run))
+
+
+@mcp.tool()
+@guarded
+def get_groove_pool(clips: bool = False) -> str:
+    """The groove pool: each groove's index, name, base (1/4 ... 1/32) and timing / random / velocity / quantize
+    amounts in percent, and the Global Amount (percent). clips=True also lists every clip with a groove assigned."""
+    return out(call("get_groove_pool", clips=clips))
+
+
+@mcp.tool()
+@guarded
+def list_grooves(search: Optional[str] = None, limit: int = 300) -> str:
+    """Groove files you can load (Live's Core Library grooves and your User Library's), by name and folder. search:
+    every word must appear, in any order (e.g. "mpc 16", "swing 8ths", "style funk")."""
+    return out(call("list_grooves", search=search, limit=limit))
+
+
+@mcp.tool()
+@guarded
+def load_groove(name: str, folder: Optional[str] = None, track: Optional[Ref] = None, slot: Optional[int] = None,
+                arrangement_index: Optional[int] = None) -> str:
+    """Load a groove file (a name from list_grooves; folder narrows a name found twice) into the groove pool. With a
+    track (and slot or arrangement_index), also assign it to that clip. Waits until it is in the pool."""
+    before = call("get_groove_pool")["count"]
+    started = call("load_groove", name=name, folder=folder)
+    pool = None
+    for _ in range(40):
+        time.sleep(0.25)
+        pool = call("get_groove_pool")
+        if pool["count"] > before:
+            break
+    else:
+        raise LiveError("%s didn't reach the groove pool (still %d grooves)" % (name, before))
+    new = pool["grooves"][-1]
+    res = {"loaded": new, "from": started}
+    if track is not None:
+        res["assigned"] = call("set_clip_groove", track=track, groove=new["index"], slot=slot,
+                               arrangement_index=arrangement_index)
+    return out(res)
+
+
+@mcp.tool()
+@guarded
+def set_groove(groove: Union[int, str], timing: Optional[float] = None, random: Optional[float] = None,
+               velocity: Optional[float] = None, quantize: Optional[float] = None, base: Optional[str] = None) -> str:
+    """Change a pool groove (index or name): timing, random, quantize 0-100 %, velocity -100..100 %, base one of
+    1/4, 1/8, 1/8T, 1/16, 1/16T, 1/32. Every clip using it follows. Read back."""
+    return out(call("set_groove", groove=groove, timing=timing, random=random, velocity=velocity, quantize=quantize,
+                    base=base))
+
+
+@mcp.tool()
+@guarded
+def set_groove_amount(amount: float) -> str:
+    """The groove pool's Global Amount in percent, 0-131.25 as Live's dial; 0 turns every groove off."""
+    return out(call("set_groove_amount", amount=amount))
+
+
+@mcp.tool()
+@guarded
+def set_clip_groove(track: Ref, groove: Union[int, str], slot: Optional[int] = None,
+                    arrangement_index: Optional[int] = None) -> str:
+    """Assign a pool groove (index or name) to a clip. Live's API can't remove a clip's groove: to switch one off, set
+    its amounts to 0 (set_groove) or turn the Global Amount down (set_groove_amount)."""
+    return out(call("set_clip_groove", track=track, groove=groove, slot=slot, arrangement_index=arrangement_index))
+
+
 # ============================================================================================ write permission
 @mcp.tool()
 @guarded

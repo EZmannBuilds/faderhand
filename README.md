@@ -16,7 +16,7 @@ nothing claims success it hasn't read back.
 
 **MCP** ([Model Context Protocol](https://modelcontextprotocol.io)) is the open standard AI clients use to call
 external tools. This project is an MCP server: your client (tested: Claude Code) starts it, and the assistant can
-then call its 87 tools.
+then call its 94 tools.
 
 ## How it works
 
@@ -110,7 +110,7 @@ Earlier versions installed the control script as `WavReadBridge` and registered 
 
 ## Tools
 
-87 tools in 13 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
+94 tools in 14 groups. Full list with arguments: [docs/TOOL-REFERENCE.md](docs/TOOL-REFERENCE.md). Units and
 conventions: [docs/TOOLS.md](docs/TOOLS.md).
 
 | Group | Tools | Examples |
@@ -126,6 +126,7 @@ conventions: [docs/TOOLS.md](docs/TOOLS.md).
 | Automation | 11 | `set_automation_points`, `get_automation`, `record_arrangement_automation` |
 | Clips, audio and recording | 10 | `create_audio_clip`, `record_tracks_audio`, `export_audio` |
 | MIDI notes | 2 | `get_clip_notes`, `set_note_expression` |
+| Groove and quantize | 7 | `quantize_notes`, `load_groove`, `set_clip_groove` |
 | Arrangement editing | 8 | `create_arrangement_midi_clip`, `split_arrangement_clip`, `cut_arrangement_range` |
 | Transport, time and metering | 4 | `transport`, `set_song_time`, `measure_levels` |
 
@@ -201,7 +202,8 @@ slots, rack macro mapping) are not part of this release.
   window through macOS Accessibility (it needs that permission). It can't pick a single track: for per-part stems,
   `record_tracks_audio` records several tracks in one real-time pass. Check any render with `tools/audio_check.py`
   (LUFS, true peak, clipping, loop seam).
-- **No groove or quantize editing** yet. MIDI velocity and expression edits are in (`set_note_expression`).
+- **A clip's groove can't be removed** through Live's API (assigning one works). To switch a groove off, set its
+  amounts to 0 (`set_groove`) or turn the Global Amount down (`set_groove_amount`).
 - Arrangement automation can only be recorded in real time, not drawn. Curve tension has no effect on Live 12.4.
 - No native Group Track creation; reordering or deleting rack chains and saving rack presets aren't possible through
   the API.
